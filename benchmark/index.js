@@ -91,9 +91,9 @@ var timed_report = function(title, fn) {
 	var p_delta = Math.round(t_delta / t_old * 100, 1);
 
 	reports_new[title] = t_new;
-	process.stdout.write('\033[1;39m' + humanize.numberFormat(t_new / 1000) + ' ms\033[0;39m \033[1;30m(score: ' + (t_new / time_baseline).toFixed(6) + ')\033[0;39m ');
+	process.stdout.write('\033[1;39m' + humanize.numberFormat(t_new / 1000) + ' ms\033[0;39m (score: ' + (t_new / time_baseline).toFixed(6) + ')\033[0;39m ');
 	if (t_old) {
-		process.stdout.write('\t' + (Math.abs(p_delta) < 5 ? '\033[1;30m' : (t_delta > 0 ? '\033[31m' : '\033[32m')));
+		process.stdout.write('\t' + (Math.abs(p_delta) < 5 ? '' : (t_delta > 0 ? '\033[31m' : '\033[32m')));
 		process.stdout.write((t_delta > 0 ? '-' : '+') + Math.abs(p_delta) + '% (' + (t_delta > 0 ? '+' : '') + humanize.numberFormat(Math.round(t_delta / 1000), 0) + 'ms)');
 		process.stdout.write('\033[0;39m');
 	}
@@ -111,8 +111,8 @@ var trial = function(title, searches, options) {
 };
 
 console.log('sifter.js Benchmark');
-console.log('\033[1;30m' + humanize.numberFormat(searches_limit, 0) + ' trials (searches)\033[0;39m');
-console.log('\033[1;30m' + humanize.numberFormat(corpus.length, 0) + ' options (index size)\033[0;39m');
+console.log( humanize.numberFormat(searches_limit, 0) + ' trials (searches)\033[0;39m');
+console.log( humanize.numberFormat(corpus.length, 0) + ' options (index size)\033[0;39m');
 console.log('\n\033[32mResults:\033[0;39m');
 
 trial('No query', searches_mixed, {query: '', options: {fields: ['a'], sort: [{field: 'a'}], direction: 'asc'}});
@@ -140,10 +140,10 @@ trial('3 field search (limit 100)', searches_mixed, {options: {fields: ['a','b',
 
 console.log('');
 trial('4 field search', searches_mixed, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc'}});
-trial('4 field search (limit 100)', searches_mixed, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc', limit: 100}});
 trial('4 field search (1 letter)', searches_1letter, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc'}});
 trial('4 field search (2 letter)', searches_2letter, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc'}});
 trial('4 field search (3 letter)', searches_3letter, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc'}});
+trial('4 field search (limit 100)', searches_mixed, {options: {fields: ['a','b','c','d'], sort: [{field: 'a'}], direction: 'asc', limit: 100}});
 
 console.log('');
 trial('5 field search', searches_mixed, {options: {fields: ['a','b','c','d','e'], sort: [{field: 'a'}], direction: 'asc'}});
