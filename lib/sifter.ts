@@ -14,6 +14,10 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
+import { getattr, escape_regex, propToArray, iterate } from './utils.ts';
+import { DIACRITICS } from './diacritics.ts';
+
+
 type TOptions = {
  	fields: string|string[],
  	sort: any[],
@@ -34,69 +38,6 @@ type TPrepareObj = {
 	total: number,
 	items: any[]
 }
-
-
-
-// utilities
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-var cmp = function(a, b) {
-	if (typeof a === 'number' && typeof b === 'number') {
-		return a > b ? 1 : (a < b ? -1 : 0);
-	}
-	a = asciifold(String(a || ''));
-	b = asciifold(String(b || ''));
-	if (a > b) return 1;
-	if (b > a) return -1;
-	return 0;
-};
-
-/**
- * A property getter resolving dot-notation
- * @param  {Object}  obj     The root object to fetch property on
- * @param  {String}  name    The optionally dotted property name to fetch
- * @param  {Boolean} nesting Handle nesting or not
- * @return {Object}          The resolved property value
- */
-var getattr = function(obj, name, nesting) {
-    if (!obj || !name) return;
-    if (!nesting) return obj[name];
-    var names = name.split(".");
-    while(names.length && (obj = obj[names.shift()]));
-    return obj;
-};
-
-var escape_regex = function(str) {
-	return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
-};
-
-var DIACRITICS = {
-	'a': '[aḀḁĂăÂâǍǎȺⱥȦȧẠạÄäÀàÁáĀāÃãÅåąĄÃąĄ]',
-	'b': '[b␢βΒB฿𐌁ᛒ]',
-	'c': '[cĆćĈĉČčĊċC̄c̄ÇçḈḉȻȼƇƈɕᴄＣｃ]',
-	'd': '[dĎďḊḋḐḑḌḍḒḓḎḏĐđD̦d̦ƉɖƊɗƋƌᵭᶁᶑȡᴅＤｄð]',
-	'e': '[eÉéÈèÊêḘḙĚěĔĕẼẽḚḛẺẻĖėËëĒēȨȩĘęᶒɆɇȄȅẾếỀềỄễỂểḜḝḖḗḔḕȆȇẸẹỆệⱸᴇＥｅɘǝƏƐε]',
-	'f': '[fƑƒḞḟ]',
-	'g': '[gɢ₲ǤǥĜĝĞğĢģƓɠĠġ]',
-	'h': '[hĤĥĦħḨḩẖẖḤḥḢḣɦʰǶƕ]',
-	'i': '[iÍíÌìĬĭÎîǏǐÏïḮḯĨĩĮįĪīỈỉȈȉȊȋỊịḬḭƗɨɨ̆ᵻᶖİiIıɪＩｉ]',
-	'j': '[jȷĴĵɈɉʝɟʲ]',
-	'k': '[kƘƙꝀꝁḰḱǨǩḲḳḴḵκϰ₭]',
-	'l': '[lŁłĽľĻļĹĺḶḷḸḹḼḽḺḻĿŀȽƚⱠⱡⱢɫɬᶅɭȴʟＬｌ]',
-	'n': '[nŃńǸǹŇňÑñṄṅŅņṆṇṊṋṈṉN̈n̈ƝɲȠƞᵰᶇɳȵɴＮｎŊŋ]',
-	'o': '[oØøÖöÓóÒòÔôǑǒŐőŎŏȮȯỌọƟɵƠơỎỏŌōÕõǪǫȌȍՕօ]',
-	'p': '[pṔṕṖṗⱣᵽƤƥᵱ]',
-	'q': '[qꝖꝗʠɊɋꝘꝙq̃]',
-	'r': '[rŔŕɌɍŘřŖŗṘṙȐȑȒȓṚṛⱤɽ]',
-	's': '[sŚśṠṡṢṣꞨꞩŜŝŠšŞşȘșS̈s̈]',
-	't': '[tŤťṪṫŢţṬṭƮʈȚțṰṱṮṯƬƭ]',
-	'u': '[uŬŭɄʉỤụÜüÚúÙùÛûǓǔŰűŬŭƯưỦủŪūŨũŲųȔȕ∪]',
-	'v': '[vṼṽṾṿƲʋꝞꝟⱱʋ]',
-	'w': '[wẂẃẀẁŴŵẄẅẆẇẈẉ]',
-	'x': '[xẌẍẊẋχ]',
-	'y': '[yÝýỲỳŶŷŸÿỸỹẎẏỴỵɎɏƳƴ]',
-	'z': '[zŹźẐẑŽžŻżẒẓẔẕƵƶ]'
-};
 
 var asciifold = (function() {
 	var i, n, k, chunk;
@@ -120,38 +61,15 @@ var asciifold = (function() {
 })();
 
 
-var propToArray = function(obj, key){
-	var value = obj[key];
-	if( value && !Array.isArray(value) ){
-		obj[key] = [value];
+function cmp(a, b) {
+	if (typeof a === 'number' && typeof b === 'number') {
+		return a > b ? 1 : (a < b ? -1 : 0);
 	}
-}
-
-
-/**
- * Iterates over arrays and hashes.
- *
- * ```
- * iterate(this.items, function(item, id) {
- *    // invoked for each item
- * });
- * ```
- *
- * @param {array|object} object
- */
-const iterate = function(object, callback) {
-
-	if ( Array.isArray(object)) {
-		Array.prototype.forEach.call(object,callback);
-
-	}else{
-
-		for (var key in object) {
-			if (object.hasOwnProperty(key)) {
-				callback(object[key], key);
-			}
-		}
-	}
+	a = asciifold(String(a || ''));
+	b = asciifold(String(b || ''));
+	if (a > b) return 1;
+	if (b > a) return -1;
+	return 0;
 };
 
 export default class Sifter{
