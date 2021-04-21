@@ -233,7 +233,7 @@ export default class Sifter{
 	 * @return function(a,b)
 	 */
 	getSortFunction(search, options:TOptions) {
-		var i, n, self, field, fields, fields_count, multiplier, multipliers, get_field, implicit_score, sort;
+		var i, n, self, sort_fld, sort_flds, sort_flds_count, multiplier, multipliers, get_field, implicit_score, sort;
 
 		self   = this;
 		search = self.prepareSearch(search, options);
@@ -253,11 +253,11 @@ export default class Sifter{
 		};
 
 		// parse options
-		fields = [];
+		sort_flds = [];
 		if (sort) {
 			for (i = 0, n = sort.length; i < n; i++) {
 				if (search.query || sort[i].field !== '$score') {
-					fields.push(sort[i]);
+					sort_flds.push(sort[i]);
 				}
 			}
 		}
@@ -266,47 +266,47 @@ export default class Sifter{
 		// sort field, unless it's manually specified
 		if (search.query) {
 			implicit_score = true;
-			for (i = 0, n = fields.length; i < n; i++) {
-				if (fields[i].field === '$score') {
+			for (i = 0, n = sort_flds.length; i < n; i++) {
+				if (sort_flds[i].field === '$score') {
 					implicit_score = false;
 					break;
 				}
 			}
 			if (implicit_score) {
-				fields.unshift({field: '$score', direction: 'desc'});
+				sort_flds.unshift({field: '$score', direction: 'desc'});
 			}
 		} else {
-			for (i = 0, n = fields.length; i < n; i++) {
-				if (fields[i].field === '$score') {
-					fields.splice(i, 1);
+			for (i = 0, n = sort_flds.length; i < n; i++) {
+				if (sort_flds[i].field === '$score') {
+					sort_flds.splice(i, 1);
 					break;
 				}
 			}
 		}
 
 		multipliers = [];
-		for (i = 0, n = fields.length; i < n; i++) {
-			multipliers.push(fields[i].direction === 'desc' ? -1 : 1);
+		for (i = 0, n = sort_flds.length; i < n; i++) {
+			multipliers.push(sort_flds[i].direction === 'desc' ? -1 : 1);
 		}
 
 		// build function
-		fields_count = fields.length;
-		if (!fields_count) {
+		sort_flds_count = sort_flds.length;
+		if (!sort_flds_count) {
 			return null;
-		} else if (fields_count === 1) {
-			field = fields[0].field;
+		} else if (sort_flds_count === 1) {
+			sort_fld = sort_flds[0].field;
 			multiplier = multipliers[0];
 			return function(a, b) {
 				return multiplier * cmp(
-					get_field(field, a),
-					get_field(field, b)
+					get_field(sort_fld, a),
+					get_field(sort_fld, b)
 				);
 			};
 		} else {
 			return function(a, b) {
 				var i, result, field;
-				for (i = 0; i < fields_count; i++) {
-					field = fields[i].field;
+				for (i = 0; i < sort_flds_count; i++) {
+					field = sort_flds[i].field;
 					result = multipliers[i] * cmp(
 						get_field(field, a),
 						get_field(field, b)
