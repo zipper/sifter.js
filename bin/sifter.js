@@ -25,7 +25,9 @@ var async     = require('async');
 var csv       = require('csv-parse');
 var Stream    = require('stream');
 var humanize  = require('humanize');
-var Sifter    = require('../lib/sifter');
+var Sifter    = require('../build/umd/sifter.js');
+
+
 var highlight = function(obj) { return cardinal.highlight(JSON.stringify(obj)); };
 
 var raw, data, result, t_start, t_end;

@@ -14,10 +14,12 @@
   "version": "0.6.0",
   "license": "Apache-2.0",
   "author": "Brian Reavis <brian@thirdroute.com>",
-  "main": "./sifter.js",
+  "main": "dist/umd/sifter.js",
+  "browser": "dist/umd/sifter.js",
+  "module": "dist/esm/sifter.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/brianreavis/sifter.js.git"
+    "url": "https://github.com/orchidjs/sifter.js.git"
   },
   "scripts": {
     "test": "mocha",
