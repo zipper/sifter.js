@@ -53,6 +53,13 @@ describe('#search()', function() {
 		assert.equal(result.items.length, 0);
 	});
 
+	it('should work if search data is an object', function() {
+		var sifter = new Sifter({a:{field: 'a'}, b:{field:'b'}});
+		var result = sifter.search('a', {fields: ['field']});
+		assert.equal(result.items.length, 1);
+		assert.equal(result.items[0].id, 'a');
+	});
+
 	describe('sorting', function() {
 		it('should respect "sort_empty" option when query absent', function() {
 			var sifter = new Sifter([

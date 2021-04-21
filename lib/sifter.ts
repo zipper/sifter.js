@@ -128,6 +128,32 @@ var propToArray = function(obj, key){
 }
 
 
+/**
+ * Iterates over arrays and hashes.
+ *
+ * ```
+ * iterate(this.items, function(item, id) {
+ *    // invoked for each item
+ * });
+ * ```
+ *
+ * @param {array|object} object
+ */
+const iterate = function(object, callback) {
+
+	if ( Array.isArray(object)) {
+		Array.prototype.forEach.call(object,callback);
+
+	}else{
+
+		for (var key in object) {
+			if (object.hasOwnProperty(key)) {
+				callback(object[key], key);
+			}
+		}
+	}
+};
+
 export default class Sifter{
 
 	public items: []|{};
@@ -201,37 +227,6 @@ export default class Sifter{
 		return tokens;
 	};
 
-	/**
-	 * Iterates over arrays and hashes.
-	 *
-	 * ```
-	 * this.iterator(this.items, function(item, id) {
-	 *    // invoked for each item
-	 * });
-	 * ```
-	 *
-	 * @param {array|object} object
-	 */
-	iterator(object, callback) {
-		var iterator;
-		if (Array.isArray(object)) {
-			iterator = Array.prototype.forEach || function(callback) {
-				for (var i = 0, n = this.length; i < n; i++) {
-					callback(this[i], i, this);
-				}
-			};
-		} else {
-			iterator = function(callback) {
-				for (var key in this) {
-					if (this.hasOwnProperty(key)) {
-						callback(this[key], key, this);
-					}
-				}
-			};
-		}
-
-		iterator.apply(object, [callback]);
-	};
 
 	/**
 	 * Returns a function to be used to score individual results.
@@ -478,14 +473,14 @@ export default class Sifter{
 
 		// perform search and sort
 		if (query.length) {
-			self.iterator(self.items, function(item, id) {
+			iterate(self.items, (item, id) => {
 				score = fn_score(item);
 				if (options.filter === false || score > 0) {
 					search.items.push({'score': score, 'id': id});
 				}
 			});
 		} else {
-			self.iterator(self.items, function(item, id) {
+			iterate(self.items, (item, id) => {
 				search.items.push({'score': 1, 'id': id});
 			});
 		}
