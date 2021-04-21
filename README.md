@@ -125,19 +125,6 @@ Performs a search for `query` with the provided `options`.
 	</tr>
 </table>
 
-## CLI
-
-![CLI](http://i.imgur.com/fSQBnWZ.png)
-
-Sifter comes with a command line interface that's useful for testing on datasets. It accepts JSON and CSV data, either from a file or from stdin (unix pipes). If using CSV data, the first line of the file must be a header row.
-```sh
-$ npm install -g sifter
-```
-
-```sh
-$ cat file.csv | sifter --query="ant" --fields=title
-$ sifter --query="ant" --fields=title --file=file.csv
-```
 
 ## Contributing
 

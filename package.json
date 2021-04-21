@@ -28,16 +28,6 @@
     "benchmark": "node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js"
   },
-  "bin": {
-    "sifter": "./bin/sifter.js"
-  },
-  "dependencies": {
-    "cardinal": "^2.1.1",
-    "async": "^3.2.0",
-    "humanize": "^0.0.9",
-    "csv-parse": "^4.15.4",
-    "yargs": "^16.2.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.13.16",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
