@@ -350,4 +350,29 @@ describe('#search()', function() {
 
 	});
 
+	describe('#field searching', function() {
+
+		var data = [
+			{fieldx: 'aa', fieldy: 'a'},
+			{fieldx: 'ab', fieldy: 'a', fieldz: 'b' }
+		];
+		var sifter = new Sifter(data);
+
+		it('should return two matching rows', function() {
+			var result = sifter.search('fieldx:a', {fields: ['fieldx','fieldy','fieldz']});
+			assert.equal(result.items.length, 2);
+		});
+
+		it('should return one matching row', function() {
+			var result = sifter.search('fieldz:b', {fields: ['fieldx','fieldy','fieldz']});
+			assert.equal(result.items.length, 1);
+		});
+
+		it('should return one matching row', function() {
+			var result = sifter.search('fieldz:', {fields: ['fieldx','fieldy','fieldz']});
+			assert.equal(result.items.length, 1);
+		});
+
+	});
+
 });
