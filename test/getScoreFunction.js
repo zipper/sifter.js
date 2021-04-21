@@ -44,7 +44,7 @@ describe('#getScoreFunction()', function() {
 			var score, search, sifter = new Sifter([]);
 
 			search = sifter.prepareSearch('test', {fields: ['a','b']});
-			score = sifter.getScoreFunction(search);
+			score = sifter._getScoreFunction(search);
 			assert.equal(typeof score({a: 'test'}), 'number');
 			assert.equal(score({a: 'test'}) > 0, true);
 			assert.equal(typeof score({}), 'number');

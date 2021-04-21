@@ -123,10 +123,14 @@ export default class Sifter{
 	 * @returns {function}
 	 */
 	getScoreFunction(query:string, options?:TOptions ){
-		var self, fields, tokens, token_count, nesting, search;
+		var search = this.prepareSearch(query, options);
+		return this._getScoreFunction(search);
+	}
+
+	_getScoreFunction(search:TPrepareObj ){
+		var self, fields, tokens, token_count, nesting;
 
 		self        = this;
-		search      = self.prepareSearch(query, options);
 		tokens      = search.tokens;
 		fields      = search.options.fields;
 		token_count = tokens.length;
@@ -229,15 +233,19 @@ export default class Sifter{
 	 * results, for sorting purposes. If no sorting should
 	 * be performed, `null` will be returned.
 	 *
-	 * @param {string|object} search
 	 * @return function(a,b)
 	 */
-	getSortFunction(search, options:TOptions) {
-		var i, n, self, sort_fld, sort_flds, sort_flds_count, multiplier, multipliers, get_field, implicit_score, sort;
+	getSortFunction(search:string, options:TOptions) {
+		var search  = this.prepareSearch(query, options);
+		return this._getSortFunction(search);
+	}
 
-		self   = this;
-		search = self.prepareSearch(search, options);
-		sort   = (!search.query && options.sort_empty) || options.sort;
+	_getSortFunction(search:TPrepareObj){
+		var i, n, self, sort_fld, sort_flds, sort_flds_count, multiplier, multipliers, get_field, implicit_score, sort, options;
+
+		self		= this;
+		options		= search.options;
+		sort		= (!search.query && options.sort_empty) || options.sort;
 
 		/**
 		 * Fetches the specified sort field value
@@ -324,8 +332,7 @@ export default class Sifter{
 	 * with results.
 	 *
 	 */
-	prepareSearch(query:string|TPrepareObj, options:TOptions):TPrepareObj {
-		if (typeof query === 'object') return query;
+	prepareSearch(query:string, options:TOptions):TPrepareObj {
 
 		options				= Object.assign({},options);
 		propToArray(options,'fields');
@@ -355,7 +362,7 @@ export default class Sifter{
 		query   = search.query;
 
 		// generate result scoring function
-		fn_score = options.score || self.getScoreFunction(search);
+		fn_score = options.score || self._getScoreFunction(search);
 
 		// perform search and sort
 		if (query.length) {
@@ -371,7 +378,7 @@ export default class Sifter{
 			});
 		}
 
-		fn_sort = self.getSortFunction(search, options);
+		fn_sort = self._getSortFunction(search);
 		if (fn_sort) search.items.sort(fn_sort);
 
 		// apply limits
