@@ -14,7 +14,7 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-import { getattr, escape_regex, propToArray, iterate } from './utils.ts';
+import { getattr, escape_regex, propToArray, iterate, cmp } from './utils.ts';
 import { DIACRITICS } from './diacritics.ts';
 
 
@@ -39,38 +39,6 @@ type TPrepareObj = {
 	items: any[]
 }
 
-var asciifold = (function() {
-	var i, n, k, chunk;
-	var foreignletters = '';
-	var lookup = {};
-	for (k in DIACRITICS) {
-		if (DIACRITICS.hasOwnProperty(k)) {
-			chunk = DIACRITICS[k].substring(2, DIACRITICS[k].length - 1);
-			foreignletters += chunk;
-			for (i = 0, n = chunk.length; i < n; i++) {
-				lookup[chunk.charAt(i)] = k;
-			}
-		}
-	}
-	var regexp = new RegExp('[' +  foreignletters + ']', 'g');
-	return function(str) {
-		return str.replace(regexp, function(foreignletter) {
-			return lookup[foreignletter];
-		}).toLowerCase();
-	};
-})();
-
-
-function cmp(a, b) {
-	if (typeof a === 'number' && typeof b === 'number') {
-		return a > b ? 1 : (a < b ? -1 : 0);
-	}
-	a = asciifold(String(a || ''));
-	b = asciifold(String(b || ''));
-	if (a > b) return 1;
-	if (b > a) return -1;
-	return 0;
-};
 
 export default class Sifter{
 
