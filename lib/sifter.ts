@@ -28,7 +28,7 @@ type TOptions = {
  	nesting?: boolean,
 	respect_word_boundaries?: boolean,
 	conjunction?: string,
- }
+}
 
 
 type TPrepareObj = {
@@ -66,7 +66,7 @@ export default class Sifter{
 	 * @param {string} query
 	 * @returns {array}
 	 */
-	tokenize(query, options ) {
+	tokenize(query:string, options?:TOptions ):{string:string,regex:RegExp,field:string}[] {
 		query = String(query || '').toLowerCase().trim();
 		if (!query || !query.length) return [];
 
