@@ -14,7 +14,7 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
+import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp, asciifold } from './utils.ts';
 import { DIACRITICS } from './diacritics.ts';
 
 
@@ -80,7 +80,6 @@ export default class Sifter{
 	 *
 	 */
 	tokenize(query:string, respect_word_boundaries?:boolean, weights?:TWeights ):TToken[] {
-		query = String(query || '').toLowerCase().trim();
 		if (!query || !query.length) return [];
 
 		var letter;
@@ -357,10 +356,11 @@ export default class Sifter{
 			});
 		}
 
+		query = asciifold( String(query || '') ).trim();
 
 		return {
 			options		: options,
-			query		: String(query || '').toLowerCase(),
+			query		: query,
 			tokens		: this.tokenize(query, options.respect_word_boundaries, weights),
 			total		: 0,
 			items		: [],

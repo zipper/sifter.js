@@ -60,6 +60,24 @@ describe('#search()', function() {
 		assert.equal(result.items[0].id, 'a');
 	});
 
+	it('should handle accents', function() {
+		var sifter = new Sifter([
+			{fields: 'a'},
+			{fields: 'Ḁ'},
+			{fields: 'ḁ'},
+			{fields: 'Ă'},
+			{fields: 'ă'},
+			{fields: 'Â'},
+		]);
+		var result = sifter.search('ą', {
+			fields: 'fields',
+			sort:[{field:'fields'}],
+		});
+
+		assert.equal(result.items.length, 6);
+	});
+
+
 	describe('sorting', function() {
 		it('should respect "sort_empty" option when query absent', function() {
 			var sifter = new Sifter([
