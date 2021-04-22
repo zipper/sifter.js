@@ -1,34 +1,9 @@
-.PHONY: compile test test-ci release benchmark
-
-MOCHA=node_modules/.bin/mocha
-COVERALLS=node_modules/.bin/coveralls
-_MOCHA=node_modules/.bin/_mocha
-ISTANBUL=node_modules/.bin/istanbul
-
-OUT=sifter.js
-OUT_MIN=sifter.min.js
-BANNER=/*! sifter.js | https://github.com/brianreavis/sifter.js | Apache License (v2) */
+.PHONY: compile release benchmark
 
 all: compile
 
 benchmark:
 	node --expose-gc benchmark/index.js
-
-test:
-	$(MOCHA) -R list
-
-test-ci:
-	$(MOCHA) -R tap
-
-test-ci-coverage:
-	@rm -rf coverage
-	$(ISTANBUL) cover $(_MOCHA) --report lcovonly -- -R tap
-
-	@echo
-	@echo Sending report to coveralls.io...
-	@cat ./coverage/lcov.info | $(COVERALLS)
-	@rm -rf ./coverage
-	@echo Done
 
 compile:
 	npm run build
