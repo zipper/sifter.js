@@ -1,6 +1,4 @@
 
-import { DIACRITICS } from './diacritics.ts';
-
 
 /**
  * A property getter resolving dot-notation
@@ -92,27 +90,13 @@ export function iterate(object, callback) {
 };
 
 
-
-var asciifold = (function() {
-	var i, n, k, chunk;
-	var foreignletters = '';
-	var lookup = {};
-	for (k in DIACRITICS) {
-		if (DIACRITICS.hasOwnProperty(k)) {
-			chunk = DIACRITICS[k].substring(2, DIACRITICS[k].length - 1);
-			foreignletters += chunk;
-			for (i = 0, n = chunk.length; i < n; i++) {
-				lookup[chunk.charAt(i)] = k;
-			}
-		}
-	}
-	var regexp = new RegExp('[' +  foreignletters + ']', 'g');
-	return function(str) {
-		return str.replace(regexp, function(foreignletter) {
-			return lookup[foreignletter];
-		}).toLowerCase();
-	};
-})();
+/**
+ * Remove accents
+ * via https://github.com/krisk/Fuse/issues/133#issuecomment-318692703
+ */
+export function asciifold(str:string):string{
+	return str.normalize('NFD').replace(/[\u0300-\u036F]/g, '').toLowerCase();
+};
 
 
 export function cmp(a, b) {
