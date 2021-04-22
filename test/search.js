@@ -217,7 +217,7 @@ describe('#search()', function() {
 	describe('returned results', function() {
 		var sifter, options, result, result_empty, result_all;
 
-		before(function() {
+		beforeAll(function() {
 			sifter = new Sifter([
 				{title: 'Matterhorn', location: 'Switzerland', continent: 'Europe'},
 				{title: 'Eiger', location: 'Switzerland', continent: 'Europe'},

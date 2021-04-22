@@ -23,7 +23,7 @@ describe('#tokenize()', function() {
 	});
 
 	describe('returned tokens', function() {
-		before(function() {
+		beforeAll(function() {
 			sifter = new Sifter([]);
 			tokens = sifter.tokenize('hello world');
 		});
