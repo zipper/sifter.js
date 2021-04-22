@@ -1,5 +1,5 @@
 var assert = require('assert');
-var Sifter = require('../build/umd/sifter.js');
+var Sifter = require('../build/cjs/sifter.js');
 
 describe('#getScoreFunction()', function() {
 
