@@ -48,7 +48,7 @@ export function propToArray(obj, key){
 export function iterate(object, callback) {
 
 	if ( Array.isArray(object)) {
-		Array.prototype.forEach.call(object,callback);
+		object.forEach(callback);
 
 	}else{
 

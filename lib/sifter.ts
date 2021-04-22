@@ -63,10 +63,8 @@ export default class Sifter{
 	 * Splits a search string into an array of individual
 	 * regexps to be used to match results.
 	 *
-	 * @param {string} query
-	 * @returns {array}
 	 */
-	tokenize(query:string, options?:TOptions ):{string:string,regex:RegExp,field:string}[] {
+	tokenize(query:string, respect_word_boundaries?:boolean, weights ):{string:string,regex:RegExp,field:string}[] {
 		query = String(query || '').toLowerCase().trim();
 		if (!query || !query.length) return [];
 
@@ -75,14 +73,14 @@ export default class Sifter{
 		var words = query.split(/\s+/);
 		var field_regex;
 
-		if( options && options.fields && options.fields.length ){
-			field_regex = new RegExp( '^('+options.fields.map(escape_regex).join('|')+')\:(.*)$');
+		if( weights ){
+			field_regex = new RegExp( '^('+ Object.keys(weights).map(escape_regex).join('|')+')\:(.*)$');
 		}
 
 		words.forEach((word) => {
 			let field_match;
-			let field = null;
-			let regex = null;
+			let field	= null;
+			let regex	= null;
 
 			// look for "field:query" tokens
 			if( field_regex && (field_match = word.match(field_regex)) ){
@@ -99,7 +97,7 @@ export default class Sifter{
 						}
 					}
 				}
-				if ( options && options.respect_word_boundaries) regex = "\\b"+regex
+				if ( respect_word_boundaries ) regex = "\\b"+regex
 				regex = new RegExp(regex, 'i');
 			}
 
@@ -128,32 +126,40 @@ export default class Sifter{
 	}
 
 	_getScoreFunction(search:TPrepareObj ){
-		var self, fields, tokens, token_count, nesting;
+		const tokens		= search.tokens,
+		token_count			= tokens.length;
 
-		self        = this;
-		tokens      = search.tokens;
-		fields      = search.options.fields;
-		token_count = tokens.length;
-		nesting     = search.options.nesting;
+		if (!token_count) {
+			return function() { return 0; };
+		}
+
+		const self		= this,
+		fields			= search.options.fields,
+		nesting			= search.options.nesting,
+		weights			= search.weights,
+		field_count		= fields.length;
+
 
 		/**
 		 * Calculates how close of a match the
 		 * given value is against a search token.
 		 *
-		 * @param {string} value
 		 * @param {object} token
 		 * @return {number}
 		 */
-		var scoreValue = function(value, token) {
+		var scoreValue = function(value:string, token, weight:number ) {
 			var score, pos;
 
 			if (!value) return 0;
+
 			value = String(value || '');
 			pos = value.search(token.regex);
 			if (pos === -1) return 0;
+
 			score = token.string.length / value.length;
 			if (pos === 0) score += 0.5;
-			return score;
+
+			return score * weight;
 		};
 
 		/**
@@ -165,33 +171,35 @@ export default class Sifter{
 		 * @return {number}
 		 */
 		var scoreObject = (function() {
-			var field_count = fields.length;
 
 			if (!field_count) {
 				return function() { return 0; };
 			}
+
 			if (field_count === 1) {
 				return function(token, data) {
-					return scoreValue(getattr(data, fields[0], nesting), token);
+					const field = fields[0].field;
+					return scoreValue(getattr(data, field, nesting), token, weights[field]);
 				};
 			}
+
 			return function(token, data) {
 				var sum = 0;
 
 				// is the token specific to a field?
 				if( token.field ){
 
-					const field = getattr(data, token.field, nesting);
+					const value = getattr(data, token.field, nesting);
 
-					if( !token.regex && field ){
+					if( !token.regex && value ){
 						sum += 0.1;
 					}else{
-						sum += scoreValue(field, token);
+						sum += scoreValue(value, token, weights[token.field]);
 					}
 
 				}else{
-					fields.forEach((field) => {
-						sum += scoreValue(getattr(data, field, nesting), token);
+					iterate(weights, (weight, field) => {
+						sum += scoreValue(getattr(data, field, nesting), token, weight);
 					});
 				}
 
@@ -199,9 +207,6 @@ export default class Sifter{
 			};
 		})();
 
-		if (!token_count) {
-			return function() { return 0; };
-		}
 		if (token_count === 1) {
 			return function(data) {
 				return scoreObject(tokens[0], data);
@@ -210,8 +215,8 @@ export default class Sifter{
 
 		if (search.options.conjunction === 'and') {
 			return function(data) {
-				var score;
-				for (var i = 0, sum = 0; i < token_count; i++) {
+				var i = 0, score, sum = 0;
+				for (; i < token_count; i++) {
 					score = scoreObject(tokens[i], data);
 					if (score <= 0) return 0;
 					sum += score;
@@ -220,9 +225,10 @@ export default class Sifter{
 			};
 		} else {
 			return function(data) {
-				for (var i = 0, sum = 0; i < token_count; i++) {
-					sum += scoreObject(tokens[i], data);
-				}
+				var sum = 0;
+				iterate(tokens,(token)=>{
+					sum += scoreObject(token, data);
+				});
 				return sum / token_count;
 			};
 		}
@@ -333,18 +339,37 @@ export default class Sifter{
 	 *
 	 */
 	prepareSearch(query:string, options:TOptions):TPrepareObj {
+		const weights = {};
 
 		options				= Object.assign({},options);
-		propToArray(options,'fields');
 		propToArray(options,'sort');
 		propToArray(options,'sort_empty');
 
+		// convert fields to new format
+		if( options.fields ){
+			propToArray(options,'fields');
+			if( Array.isArray(options.fields) && typeof options.fields[0] !== 'object' ){
+				var fields = [];
+				options.fields.forEach((fld_name) => {
+					fields.push({field:fld_name});
+				});
+				options.fields = fields;
+			}
+
+
+			options.fields.forEach((field_params)=>{
+				weights[field_params.field] = ('weight' in field_params) ? field_params.weight : 1;
+			});
+		}
+
+
 		return {
-			options : options,
-			query   : String(query || '').toLowerCase(),
-			tokens  : this.tokenize(query, options),
-			total   : 0,
-			items   : []
+			options		: options,
+			query		: String(query || '').toLowerCase(),
+			tokens		: this.tokenize(query, options.respect_word_boundaries, weights),
+			total		: 0,
+			items		: [],
+			weights		: weights,
 		};
 	};
 

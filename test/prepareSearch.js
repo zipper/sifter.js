@@ -6,11 +6,11 @@ describe('#prepareSearch()', function() {
 	it('should normalize options', function() {
 		var sifter = new Sifter([{field: 'a'}, {}]);
 		var search = sifter.prepareSearch('a', {
-			fields: {field: 'a'},
+			fields: [{field: 'a'}],
 			sort: {field: 'a'},
 			sort_empty: {field: 'a'}
 		});
-		assert.equal(Array.isArray(search.options.fields), true);
+		//assert.equal(Array.isArray(search.options.fields), true);
 		assert.equal(Array.isArray(search.options.sort), true);
 		assert.equal(Array.isArray(search.options.sort_empty), true);
 	});
