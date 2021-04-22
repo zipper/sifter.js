@@ -4,7 +4,6 @@ MOCHA=node_modules/.bin/mocha
 COVERALLS=node_modules/.bin/coveralls
 _MOCHA=node_modules/.bin/_mocha
 ISTANBUL=node_modules/.bin/istanbul
-UGLIFYJS=node_modules/.bin/uglifyjs
 
 OUT=sifter.js
 OUT_MIN=sifter.min.js
@@ -32,11 +31,7 @@ test-ci-coverage:
 	@echo Done
 
 compile:
-	@cp lib/sifter.js sifter.js
-	$(UGLIFYJS) --mangle -b beautify=false,ascii_only=true --output $(OUT_MIN) $(OUT)
-	@echo "$(BANNER)" | cat - $(OUT_MIN) > temp && mv temp $(OUT_MIN)
-
-	@echo "`cat $(OUT_MIN) | gzip -9f | wc -c` bytes (gzipped)"
+	npm run build
 
 release:
 ifeq ($(strip $(version)),)
