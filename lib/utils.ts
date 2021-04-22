@@ -8,7 +8,7 @@ import { DIACRITICS } from './diacritics.ts';
  * @param  {String}  name    The optionally dotted property name to fetch
  * @return {Object}          The resolved property value
  */
-export function getAttr(obj, name, nesting) {
+export function getAttr(obj:{[key:string]:any}, name:string ) {
     if (!obj ) return;
     return obj[name];
 };
@@ -19,7 +19,7 @@ export function getAttr(obj, name, nesting) {
  * @param  {String}  name    The optionally dotted property name to fetch
  * @return {Object}          The resolved property value
  */
-export function getAttrNesting(obj, name ) {
+export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
     if (!obj ) return;
     var names = name.split(".");
     while(names.length && (obj = obj[names.shift()]));

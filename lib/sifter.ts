@@ -18,8 +18,13 @@ import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate
 import { DIACRITICS } from './diacritics.ts';
 
 
+type TField = {
+	field: string,
+	weight?: number,
+}
+
 type TOptions = {
- 	fields: string|string[],
+ 	fields: TField[],
  	sort: any[],
  	score?: ()=>any,
  	filter?: boolean,
@@ -30,20 +35,25 @@ type TOptions = {
 	conjunction?: string,
 }
 
+type TToken = {
+	string:string,
+	regex:RegExp,
+	field:string
+}
+
+type TWeights = {[key:string]:number}
 
 type TPrepareObj = {
 	options: TOptions,
 	query: string,
 	tokens: TToken[],
 	total: number,
-	items: any[]
+	items: any[],
+	weights: TWeights,
+	getAttrFn: (any,string)=>any,
+
 }
 
-type TToken = {
-	string:string,
-	regex:RegExp,
-	field:string
-}
 
 export default class Sifter{
 
@@ -69,7 +79,7 @@ export default class Sifter{
 	 * regexps to be used to match results.
 	 *
 	 */
-	tokenize(query:string, respect_word_boundaries?:boolean, weights ):TToken[] {
+	tokenize(query:string, respect_word_boundaries?:boolean, weights?:TWeights ):TToken[] {
 		query = String(query || '').toLowerCase().trim();
 		if (!query || !query.length) return [];
 
@@ -125,7 +135,7 @@ export default class Sifter{
 	 *
 	 * @returns {function}
 	 */
-	getScoreFunction(query:string, options?:TOptions ){
+	getScoreFunction(query:string, options ){
 		var search = this.prepareSearch(query, options);
 		return this._getScoreFunction(search);
 	}
@@ -138,9 +148,7 @@ export default class Sifter{
 			return function() { return 0; };
 		}
 
-		const self		= this,
-		fields			= search.options.fields,
-		nesting			= search.options.nesting,
+		const fields	= search.options.fields,
 		weights			= search.weights,
 		field_count		= fields.length,
 		getAttrFn		= search.getAttrFn;
@@ -228,7 +236,7 @@ export default class Sifter{
 	 *
 	 * @return function(a,b)
 	 */
-	getSortFunction(search:string, options:TOptions) {
+	getSortFunction(query:string, options) {
 		var search  = this.prepareSearch(query, options);
 		return this._getSortFunction(search);
 	}
@@ -250,7 +258,7 @@ export default class Sifter{
 		 */
 		get_field = function(name, result) {
 			if (name === '$score') return result.score;
-			return search.getAttrFn(self.items[result.id], name, options.nesting);
+			return search.getAttrFn(self.items[result.id], name);
 		};
 
 		// parse options
@@ -325,10 +333,10 @@ export default class Sifter{
 	 * with results.
 	 *
 	 */
-	prepareSearch(query:string, options:TOptions):TPrepareObj {
-		const weights = {};
+	prepareSearch(query:string, optsUser):TPrepareObj {
+		const weights	= {};
+		var options		= Object.assign({},optsUser);
 
-		options				= Object.assign({},options);
 		propToArray(options,'sort');
 		propToArray(options,'sort_empty');
 
