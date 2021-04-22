@@ -14,7 +14,7 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-import { getattr, escape_regex, propToArray, iterate, cmp } from './utils.ts';
+import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
 import { DIACRITICS } from './diacritics.ts';
 
 
@@ -34,11 +34,16 @@ type TOptions = {
 type TPrepareObj = {
 	options: TOptions,
 	query: string,
-	tokens: any,
+	tokens: TToken[],
 	total: number,
 	items: any[]
 }
 
+type TToken = {
+	string:string,
+	regex:RegExp,
+	field:string
+}
 
 export default class Sifter{
 
@@ -64,7 +69,7 @@ export default class Sifter{
 	 * regexps to be used to match results.
 	 *
 	 */
-	tokenize(query:string, respect_word_boundaries?:boolean, weights ):{string:string,regex:RegExp,field:string}[] {
+	tokenize(query:string, respect_word_boundaries?:boolean, weights ):TToken[] {
 		query = String(query || '').toLowerCase().trim();
 		if (!query || !query.length) return [];
 
@@ -137,36 +142,16 @@ export default class Sifter{
 		fields			= search.options.fields,
 		nesting			= search.options.nesting,
 		weights			= search.weights,
-		field_count		= fields.length;
+		field_count		= fields.length,
+		getAttrFn		= search.getAttrFn;
 
 
-		/**
-		 * Calculates how close of a match the
-		 * given value is against a search token.
-		 *
-		 * @param {object} token
-		 * @return {number}
-		 */
-		var scoreValue = function(value:string, token, weight:number ) {
-			var score, pos;
-
-			if (!value) return 0;
-
-			value = String(value || '');
-			pos = value.search(token.regex);
-			if (pos === -1) return 0;
-
-			score = token.string.length / value.length;
-			if (pos === 0) score += 0.5;
-
-			return score * weight;
-		};
 
 		/**
 		 * Calculates the score of an object
 		 * against the search query.
 		 *
-		 * @param {object} token
+		 * @param {TToken} token
 		 * @param {object} data
 		 * @return {number}
 		 */
@@ -177,19 +162,19 @@ export default class Sifter{
 			}
 
 			if (field_count === 1) {
-				return function(token, data) {
+				return function(token:TToken, data) {
 					const field = fields[0].field;
-					return scoreValue(getattr(data, field, nesting), token, weights[field]);
+					return scoreValue(getAttrFn(data, field), token, weights[field]);
 				};
 			}
 
-			return function(token, data) {
+			return function(token:TToken, data) {
 				var sum = 0;
 
 				// is the token specific to a field?
 				if( token.field ){
 
-					const value = getattr(data, token.field, nesting);
+					const value = getAttrFn(data, token.field);
 
 					if( !token.regex && value ){
 						sum += 0.1;
@@ -197,9 +182,11 @@ export default class Sifter{
 						sum += scoreValue(value, token, weights[token.field]);
 					}
 
+
+
 				}else{
 					iterate(weights, (weight, field) => {
-						sum += scoreValue(getattr(data, field, nesting), token, weight);
+						sum += scoreValue(getAttrFn(data, field), token, weight);
 					});
 				}
 
@@ -226,7 +213,7 @@ export default class Sifter{
 		} else {
 			return function(data) {
 				var sum = 0;
-				iterate(tokens,(token)=>{
+				iterate(tokens,(token:TToken)=>{
 					sum += scoreObject(token, data);
 				});
 				return sum / token_count;
@@ -263,7 +250,7 @@ export default class Sifter{
 		 */
 		get_field = function(name, result) {
 			if (name === '$score') return result.score;
-			return getattr(self.items[result.id], name, options.nesting);
+			return search.getAttrFn(self.items[result.id], name, options.nesting);
 		};
 
 		// parse options
@@ -370,6 +357,7 @@ export default class Sifter{
 			total		: 0,
 			items		: [],
 			weights		: weights,
+			getAttrFn	: (options.nesting) ? getAttrNesting : getAttr,
 		};
 	};
 

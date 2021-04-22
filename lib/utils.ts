@@ -6,15 +6,46 @@ import { DIACRITICS } from './diacritics.ts';
  * A property getter resolving dot-notation
  * @param  {Object}  obj     The root object to fetch property on
  * @param  {String}  name    The optionally dotted property name to fetch
- * @param  {Boolean} nesting Handle nesting or not
  * @return {Object}          The resolved property value
  */
-export function getattr(obj, name, nesting) {
-    if (!obj || !name) return;
-    if (!nesting) return obj[name];
+export function getAttr(obj, name, nesting) {
+    if (!obj ) return;
+    return obj[name];
+};
+
+/**
+ * A property getter resolving dot-notation
+ * @param  {Object}  obj     The root object to fetch property on
+ * @param  {String}  name    The optionally dotted property name to fetch
+ * @return {Object}          The resolved property value
+ */
+export function getAttrNesting(obj, name ) {
+    if (!obj ) return;
     var names = name.split(".");
     while(names.length && (obj = obj[names.shift()]));
     return obj;
+};
+
+/**
+ * Calculates how close of a match the
+ * given value is against a search token.
+ *
+ * @param {object} token
+ * @return {number}
+ */
+export function scoreValue(value:string, token, weight:number ) {
+	var score, pos;
+
+	if (!value) return 0;
+
+	value = String(value || '');
+	pos = value.search(token.regex);
+	if (pos === -1) return 0;
+
+	score = token.string.length / value.length;
+	if (pos === 0) score += 0.5;
+
+	return score * weight;
 };
 
 export function escape_regex(str) {
