@@ -23,12 +23,12 @@
   },
   "scripts": {
     "test:mocha": "mocha",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:typescript": "tsc -p .config --noemit",
     "pretest": "npm run build",
     "benchmark": "node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js",
-	"coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
+	"coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
