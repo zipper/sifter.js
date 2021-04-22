@@ -1,6 +1,6 @@
 .DS_store
 node_modules
-benchmark/report.json
+benchmark/report*.json
 coverage
 package-lock.json
 build
