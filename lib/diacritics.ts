@@ -147,6 +147,7 @@ export function asciifold(str:string):string{
  * Convert list of diacritics to array of code points
  *
  */
+// @ts-ignore
 function toCodePoints(tolerance=8){
 	var char_codes = [];
 
@@ -220,6 +221,8 @@ export function generateDiacritics():TDiacraticList{
 		}
 	});
 
+	//console.log('no_latin',JSON.stringify(no_latin));
+
 	return diacritics;
 }
 
@@ -233,7 +236,6 @@ export function diacriticRegexPoints(regex:string):string{
 
 	if( diacritics === null ){
 		diacritics = generateDiacritics();
-		console.log('generate');
 	}
 
 	for( let latin in diacritics ){
