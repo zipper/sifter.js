@@ -1,19 +1,20 @@
 # sifter.js
-[![NPM version](http://img.shields.io/npm/v/sifter.svg?style=flat)](https://www.npmjs.org/package/sifter)
-[![Installs](http://img.shields.io/npm/dm/sifter.svg?style=flat)](https://www.npmjs.org/package/sifter)
 [![Build Status](https://travis-ci.org/orchidjs/sifter.js.svg)](https://travis-ci.org/orchidjs/sifter.js)
 [![Coverage Status](http://img.shields.io/coveralls/orchidjs/sifter.js/master.svg?style=flat)](https://coveralls.io/r/orchidjs/sifter.js)
 
-Sifter is a client and server-side library (via [UMD](https://github.com/umdjs/umd)) for textually searching arrays and hashes of objects by property – or multiple properties. It's designed specifically for autocomplete. The process is three-step: *score*, *filter*, *sort*.
+
+Sifter is a fast and small (<6kb) client and server-side library (coded in TypeScript and available in [CJS, UMD, and ESM](https://irian.to/blogs/what-are-cjs-amd-umd-and-esm-in-javascript/)) for textually searching arrays and hashes of objects by property – or multiple properties. It's designed specifically for autocomplete. The process is three-step: *score*, *filter*, *sort*.
 
 * **Supports díåcritîçs.**<br>For example, if searching for "montana" and an item in the set has a value of "montaña", it will still be matched. Sorting will also play nicely with diacritics.
 * **Smart scoring.**<br>Items are scored / sorted intelligently depending on where a match is found in the string (how close to the beginning) and what percentage of the string matches.
 * **Multi-field sorting.**<br>When scores aren't enough to go by – like when getting results for an empty query – it can sort by one or more fields. For example, sort by a person's first name and last name without actually merging the properties to a single string.
 * **Nested properties.**<br>Allows to search and sort on nested properties so you can perform search on complex objects without flattening them simply by using dot-notation to reference fields (ie. `nested.property`).
+* **Weighted fields.**<br>Assign weights to multi-field configurations for more control of search results
+* **Field searching**<br>Search for values in one field with "field-name:query"
+
 
 ```sh
-$ npm install sifter # node.js
-$ bower install sifter # browser
+$ npm install @orchidjs/sifter # node.js
 ```
 
 ## Usage
@@ -30,7 +31,7 @@ var sifter = new Sifter([
 ]);
 
 var result = sifter.search('anna', {
-	fields: ['title', 'location', 'continent'],
+	fields: [{field:'title',weight:2}, {field:'location'}, {field:'continent',weight:0.5}],
 	sort: [{field: 'title', direction: 'asc'}],
 	limit: 3
 });
@@ -38,10 +39,10 @@ var result = sifter.search('anna', {
 
 Seaching will provide back meta information and an "items" array that contains objects with the index (or key, if searching a hash) and a score that represents how good of a match the item was. Items that did not match will not be returned.
 
-```
-{"score": 0.2878787878787879, "id": 0},
-{"score": 0.27777777777777773, "id": 1},
-{"score": 0.2692307692307692, "id": 2}
+```js
+{ score: 0.5757575757575758, id: 0 },
+{ score: 0.5555555555555555, id: 1 },
+{ score: 0.5384615384615384, id: 2 }
 ```
 
 Items are sorted by best-match, primarily. If two or more items have the same score (which will be the case when searching with an empty string), it will resort to the fields listed in the "sort" option.
@@ -50,23 +51,23 @@ The full result comes back in the format of:
 
 ```js
 {
-	"options": {
-		"fields": ["title", "location", "continent"],
-		"sort": [
-			{"field": "title", "direction": "asc"}
+	options: {
+		fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent",weight:0.5}],
+		sort: [
+			{field: "title", direction: "asc"}
 		],
-		"limit": 3
+		limit: 3
 	},
-	"query": "anna",
-	"tokens": [{
-		"string": "anna",
-		"regex": /[aÀÁÂÃÄÅàáâãäå][nÑñ][nÑñ][aÀÁÂÃÄÅàáâãäå]/
+	query: "anna",
+	tokens: [{
+		string: "anna",
+		regex: /[aÀÁÂÃÄÅàáâãäå][nÑñ][nÑñ][aÀÁÂÃÄÅàáâãäå]/
 	}],
-	"total": 3,
-	"items": [
-		{"score": 0.2878787878787879, "id": 0},
-		{"score": 0.27777777777777773, "id": 1},
-		{"score": 0.2692307692307692,"id": 2}
+	total: 3,
+	items: [
+		{ score: 0.5757575757575758, id: 0 },
+     	{ score: 0.5555555555555555, id: 1 },
+     	{ score: 0.5384615384615384, id: 2 }
 	]
 }
 ```
@@ -86,7 +87,11 @@ Performs a search for `query` with the provided `options`.
 	<tr>
 		<td valign="top"><code>fields</code></td>
 		<td valign="top">array</td>
-		<td valign="top">An array of property names to be searched.</td>
+		<td valign="top">An array of property names and optional weights to be searched.
+```js
+fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent",weight:0.5}],
+```
+</td>
 	</tr>
 	<tr>
 		<td valign="top"><code>limit</code></td>
