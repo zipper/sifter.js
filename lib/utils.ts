@@ -1,4 +1,5 @@
 
+import { asciifold } from './diacritics.ts';
 
 /**
  * A property getter resolving dot-notation
@@ -90,21 +91,13 @@ export function iterate(object, callback) {
 };
 
 
-/**
- * Remove accents
- * via https://github.com/krisk/Fuse/issues/133#issuecomment-318692703
- */
-export function asciifold(str:string):string{
-	return str.normalize('NFD').replace(/[\u0300-\u036F]/g, '').toLowerCase();
-};
-
 
 export function cmp(a, b) {
 	if (typeof a === 'number' && typeof b === 'number') {
 		return a > b ? 1 : (a < b ? -1 : 0);
 	}
-	a = asciifold(String(a || ''));
-	b = asciifold(String(b || ''));
+	a = asciifold(String(a || '')).toLowerCase();
+	b = asciifold(String(b || '')).toLowerCase();
 	if (a > b) return 1;
 	if (b > a) return -1;
 	return 0;

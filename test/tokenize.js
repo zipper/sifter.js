@@ -54,8 +54,8 @@ describe('#tokenize()', function() {
 				assert.equal(tokens[0].regex.test('afawfaf'), false);
 			});
 			it('should match international characters', function() {
-				assert.equal(tokens[0].regex.test('hęłlö'), true);
-				assert.equal(tokens[1].regex.test('wÕrlƌ'), true);
+				assert.equal(tokens[0].regex.test('Ḧęŀlö'), true);
+				assert.equal(tokens[1].regex.test('ẘÕⓡlḋ'), true);
 			});
 		});
 	});

@@ -14,8 +14,8 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp, asciifold } from './utils.ts';
-import { diacriticRegex } from './diacritics.ts';
+import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
+import { diacriticRegexPoints, asciifold } from './diacritics.ts';
 
 
 type TField = {
@@ -105,7 +105,7 @@ export default class Sifter{
 			if( word.length > 0 ){
 				regex = escape_regex(word);
 				if( this.settings.diacritics ){
-					regex = diacriticRegex(regex);
+					regex = diacriticRegexPoints(regex);
 				}
 				if( respect_word_boundaries ) regex = "\\b"+regex
 				regex = new RegExp(regex, 'i');
@@ -352,7 +352,7 @@ export default class Sifter{
 			});
 		}
 
-		query = asciifold( String(query || '') ).trim();
+		query = asciifold( String(query || '') ).toLowerCase().trim();
 
 		return {
 			options		: options,
