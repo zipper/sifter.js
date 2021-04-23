@@ -1,6 +1,8 @@
 
+type TDiacraticList = {[key:string]:string};
+
 // https://github.com/andrewrk/node-diacritics/blob/master/index.js
-var DIACRITICS:{ [key: string]: string } = {
+var DIACRITICS:TDiacraticList = {
 	" ":" ",
 	0:"߀",
 	A:"ⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ",
@@ -181,7 +183,7 @@ function toCodePoints(tolerance=8){
  * Generate a list of diacritics from the list of code points
  *
  */
-export function generateDiacritics(){
+export function generateDiacritics():TDiacraticList{
 
 	var latin_convert = {
 		'l·': 'l',
@@ -226,20 +228,21 @@ export function generateDiacritics(){
  * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/
  *
  */
-var diacriticRegexPoints = (function() {
+var diacritics:TDiacraticList = null
+export function diacriticRegexPoints(regex:string):string{
 
-	const diacritics = generateDiacritics();
+	if( diacritics === null ){
+		diacritics = generateDiacritics();
+		console.log('generate');
+	}
 
-	return function(regex:string):string{
-		for( let latin in diacritics ){
-			if( diacritics.hasOwnProperty(latin) ){
-				regex = regex.replace( new RegExp(latin,'g'), '['+diacritics[latin]+']');
-			}
+	for( let latin in diacritics ){
+		if( diacritics.hasOwnProperty(latin) ){
+			regex = regex.replace( new RegExp(latin,'g'), '['+diacritics[latin]+']');
 		}
-		return regex;
-	};
-
-})();
+	}
+	return regex;
+}
 
 
 /**
@@ -276,5 +279,3 @@ var diacriticRegex = (function() {
 	}
 })();
 */
-
-export { diacriticRegexPoints };
