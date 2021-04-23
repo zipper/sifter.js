@@ -14,7 +14,9 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
+// @ts-ignore
 import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
+// @ts-ignore
 import { diacriticRegexPoints, asciifold } from './diacritics.ts';
 
 
@@ -82,7 +84,6 @@ export default class Sifter{
 	tokenize(query:string, respect_word_boundaries?:boolean, weights?:TWeights ):TToken[] {
 		if (!query || !query.length) return [];
 
-		var letter;
 		var tokens = [];
 		var words = query.split(/\s+/);
 		var field_regex;

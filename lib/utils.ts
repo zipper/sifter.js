@@ -1,4 +1,5 @@
 
+// @ts-ignore
 import { asciifold } from './diacritics.ts';
 
 /**
