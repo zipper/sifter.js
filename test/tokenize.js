@@ -55,7 +55,7 @@ describe('#tokenize()', function() {
 			});
 			it('should match international characters', function() {
 				assert.equal(tokens[0].regex.test('hęłlö'), true);
-				assert.equal(tokens[1].regex.test('wÕrlð'), true);
+				assert.equal(tokens[1].regex.test('wÕrlƌ'), true);
 			});
 		});
 	});

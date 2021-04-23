@@ -15,7 +15,7 @@
  */
 
 import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp, asciifold } from './utils.ts';
-import { DIACRITICS } from './diacritics.ts';
+import { diacriticRegex } from './diacritics.ts';
 
 
 type TField = {
@@ -91,7 +91,7 @@ export default class Sifter{
 			field_regex = new RegExp( '^('+ Object.keys(weights).map(escape_regex).join('|')+')\:(.*)$');
 		}
 
-		words.forEach((word) => {
+		words.forEach((word:string) => {
 			let field_match;
 			let field	= null;
 			let regex	= null;
@@ -104,14 +104,10 @@ export default class Sifter{
 
 			if( word.length > 0 ){
 				regex = escape_regex(word);
-				if (this.settings.diacritics) {
-					for (letter in DIACRITICS) {
-						if (DIACRITICS.hasOwnProperty(letter)) {
-							regex = regex.replace(new RegExp(letter, 'g'), DIACRITICS[letter]);
-						}
-					}
+				if( this.settings.diacritics ){
+					regex = diacriticRegex(regex);
 				}
-				if ( respect_word_boundaries ) regex = "\\b"+regex
+				if( respect_word_boundaries ) regex = "\\b"+regex
 				regex = new RegExp(regex, 'i');
 			}
 
