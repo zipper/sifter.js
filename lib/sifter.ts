@@ -353,7 +353,7 @@ export default class Sifter{
 			});
 		}
 
-		query = asciifold( String(query || '') ).toLowerCase().trim();
+		query = asciifold( query + '' ).toLowerCase().trim();
 
 		return {
 			options		: options,

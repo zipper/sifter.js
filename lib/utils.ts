@@ -38,7 +38,7 @@ export function scoreValue(value:string, token, weight:number ) {
 
 	if (!value) return 0;
 
-	value = String(value || '');
+	value = value + '';
 	pos = value.search(token.regex);
 	if (pos === -1) return 0;
 
@@ -97,8 +97,8 @@ export function cmp(a, b) {
 	if (typeof a === 'number' && typeof b === 'number') {
 		return a > b ? 1 : (a < b ? -1 : 0);
 	}
-	a = asciifold(String(a || '')).toLowerCase();
-	b = asciifold(String(b || '')).toLowerCase();
+	a = asciifold(a + '').toLowerCase();
+	b = asciifold(b + '').toLowerCase();
 	if (a > b) return 1;
 	if (b > a) return -1;
 	return 0;
