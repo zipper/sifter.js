@@ -43,7 +43,7 @@ function getAttrNesting(obj, name) {
 function scoreValue(value, token, weight) {
   var score, pos;
   if (!value) return 0;
-  value = String(value || '');
+  value = value + '';
   pos = value.search(token.regex);
   if (pos === -1) return 0;
   score = token.string.length / value.length;
@@ -93,8 +93,8 @@ function cmp(a, b) {
     return a > b ? 1 : a < b ? -1 : 0;
   }
 
-  a = diacritics.asciifold(String(a || '')).toLowerCase();
-  b = diacritics.asciifold(String(b || '')).toLowerCase();
+  a = diacritics.asciifold(a + '').toLowerCase();
+  b = diacritics.asciifold(b + '').toLowerCase();
   if (a > b) return 1;
   if (b > a) return -1;
   return 0;

@@ -45,8 +45,8 @@ class Sifter {
    */
   tokenize(query, respect_word_boundaries, weights) {
     if (!query || !query.length) return [];
-    var tokens = [];
-    var words = query.split(/\s+/);
+    const tokens = [];
+    const words = query.split(/\s+/);
     var field_regex;
 
     if (weights) {
@@ -119,7 +119,7 @@ class Sifter {
      * @return {number}
      */
 
-    var scoreObject = function () {
+    const scoreObject = function () {
       if (!field_count) {
         return function () {
           return 0;
@@ -140,9 +140,9 @@ class Sifter {
           const value = getAttrFn(data, token.field);
 
           if (!token.regex && value) {
-            sum += 0.1;
+            sum += 1 / field_count;
           } else {
-            sum += utils.scoreValue(value, token, weights[token.field]);
+            sum += utils.scoreValue(value, token, 1);
           }
         } else {
           utils.iterate(weights, (weight, field) => {
@@ -198,10 +198,12 @@ class Sifter {
   }
 
   _getSortFunction(search) {
-    var i, n, self, sort_fld, sort_flds, sort_flds_count, multiplier, multipliers, get_field, implicit_score, sort, options;
-    self = this;
-    options = search.options;
-    sort = !search.query && options.sort_empty || options.sort;
+    var i, n, sort_fld, sort_flds_count, multiplier, implicit_score;
+    const self = this,
+          options = search.options,
+          sort = !search.query && options.sort_empty || options.sort,
+          sort_flds = [],
+          multipliers = [];
     /**
      * Fetches the specified sort field value
      * from a search result item.
@@ -211,13 +213,11 @@ class Sifter {
      * @return {string}
      */
 
-    get_field = function (name, result) {
+    const get_field = function get_field(name, result) {
       if (name === '$score') return result.score;
       return search.getAttrFn(self.items[result.id], name);
     }; // parse options
 
-
-    sort_flds = [];
 
     if (sort) {
       for (i = 0, n = sort.length; i < n; i++) {
@@ -253,8 +253,6 @@ class Sifter {
         }
       }
     }
-
-    multipliers = [];
 
     for (i = 0, n = sort_flds.length; i < n; i++) {
       multipliers.push(sort_flds[i].direction === 'desc' ? -1 : 1);
@@ -316,7 +314,7 @@ class Sifter {
       });
     }
 
-    query = diacritics.asciifold(String(query || '')).toLowerCase().trim();
+    query = diacritics.asciifold(query + '').toLowerCase().trim();
     return {
       options: options,
       query: query,
