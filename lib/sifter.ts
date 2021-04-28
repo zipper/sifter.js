@@ -84,8 +84,8 @@ export default class Sifter{
 	tokenize(query:string, respect_word_boundaries?:boolean, weights?:TWeights ):TToken[] {
 		if (!query || !query.length) return [];
 
-		var tokens = [];
-		var words = query.split(/\s+/);
+		const tokens = [];
+		const words = query.split(/\s+/);
 		var field_regex;
 
 		if( weights ){
@@ -238,11 +238,14 @@ export default class Sifter{
 	}
 
 	_getSortFunction(search:TPrepareObj){
-		var i, n, self, sort_fld, sort_flds, sort_flds_count, multiplier, multipliers, get_field, implicit_score, sort, options;
+		var i, n, sort_fld, sort_flds_count, multiplier, implicit_score;
 
-		self		= this;
-		options		= search.options;
-		sort		= (!search.query && options.sort_empty) || options.sort;
+		const self	= this,
+		options		= search.options,
+		sort		= (!search.query && options.sort_empty) || options.sort,
+		sort_flds	= [],
+		multipliers = [];
+
 
 		/**
 		 * Fetches the specified sort field value
@@ -252,13 +255,12 @@ export default class Sifter{
 		 * @param  {object} result
 		 * @return {string}
 		 */
-		get_field = function(name, result) {
+		const get_field = function(name, result) {
 			if (name === '$score') return result.score;
 			return search.getAttrFn(self.items[result.id], name);
 		};
 
 		// parse options
-		sort_flds = [];
 		if (sort) {
 			for (i = 0, n = sort.length; i < n; i++) {
 				if (search.query || sort[i].field !== '$score') {
@@ -289,7 +291,6 @@ export default class Sifter{
 			}
 		}
 
-		multipliers = [];
 		for (i = 0, n = sort_flds.length; i < n; i++) {
 			multipliers.push(sort_flds[i].direction === 'desc' ? -1 : 1);
 		}
