@@ -159,7 +159,7 @@ export default class Sifter{
 		 * @param {object} data
 		 * @return {number}
 		 */
-		var scoreObject = (function() {
+		const scoreObject = (function() {
 
 			if (!field_count) {
 				return function() { return 0; };
@@ -181,9 +181,9 @@ export default class Sifter{
 					const value = getAttrFn(data, token.field);
 
 					if( !token.regex && value ){
-						sum += 0.1;
+						sum += (1/field_count);
 					}else{
-						sum += scoreValue(value, token, weights[token.field]);
+						sum += scoreValue(value, token, 1);
 					}
 
 
