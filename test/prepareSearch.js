@@ -4,11 +4,11 @@ var Sifter = require('../build/cjs/sifter.js');
 describe('#prepareSearch()', function() {
 
 	it('should normalize options', function() {
-		var sifter = new Sifter([{field: 'a'}, {}]);
+		var sifter = new Sifter([{fielda: 'a'}, {}]);
 		var search = sifter.prepareSearch('a', {
-			fields: [{field: 'a'}],
-			sort: {field: 'a'},
-			sort_empty: {field: 'a'}
+			fields: [{field: 'fielda'}],
+			sort: {field: 'fielda'},
+			sort_empty: {field: 'fielda'}
 		});
 		//assert.equal(Array.isArray(search.options.fields), true);
 		assert.equal(Array.isArray(search.options.sort), true);
