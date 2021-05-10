@@ -287,4 +287,21 @@ describe('#search()', function() {
 	});
 
 
+	it('empty field', function() {
+
+		var data = [
+			{fieldx: 'aaa', fieldy: 'abb'},
+			{fieldx: 'abb', fieldy: 'aaa'}
+		];
+		var sifter = new Sifter(data);
+
+		var result = sifter.search('b', {
+			fields: []
+		});
+
+		assert.equal(result.items.length,2);
+		assert.equal(result.items[0].id,0);
+	});
+
+
 });

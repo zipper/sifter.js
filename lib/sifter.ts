@@ -149,6 +149,9 @@ export default class Sifter{
 		field_count		= fields.length,
 		getAttrFn		= search.getAttrFn;
 
+		if (!field_count) {
+			return function() { return 1; };
+		}
 
 
 		/**
@@ -161,9 +164,6 @@ export default class Sifter{
 		 */
 		const scoreObject = (function() {
 
-			if (!field_count) {
-				return function() { return 0; };
-			}
 
 			if (field_count === 1) {
 				return function(token:TToken, data) {
