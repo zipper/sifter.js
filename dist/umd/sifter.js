@@ -320,6 +320,12 @@
 	          weights = search.weights,
 	          field_count = fields.length,
 	          getAttrFn = search.getAttrFn;
+
+	    if (!field_count) {
+	      return function () {
+	        return 1;
+	      };
+	    }
 	    /**
 	     * Calculates the score of an object
 	     * against the search query.
@@ -329,13 +335,8 @@
 	     * @return {number}
 	     */
 
-	    const scoreObject = function () {
-	      if (!field_count) {
-	        return function () {
-	          return 0;
-	        };
-	      }
 
+	    const scoreObject = function () {
 	      if (field_count === 1) {
 	        return function (token, data) {
 	          const field = fields[0].field;
