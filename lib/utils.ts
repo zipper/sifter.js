@@ -21,8 +21,8 @@ export function getAttr(obj:{[key:string]:any}, name:string ) {
  */
 export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
     if (!obj ) return;
-    var names = name.split(".");
-    while(names.length && (obj = obj[names.shift()]));
+    var part, names = name.split(".");
+	while( (part = names.shift()) && (obj = obj[part]));
     return obj;
 };
 
@@ -48,7 +48,7 @@ export function scoreValue(value:string, token, weight:number ) {
 	return score * weight;
 };
 
-export function escape_regex(str) {
+export function escape_regex(str:string):string {
 	return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
 };
 

@@ -149,18 +149,19 @@ export function asciifold(str:string):string{
  */
 // @ts-ignore
 function toCodePoints(tolerance=8){
-	var char_codes = [];
+	var char_codes:number[] = [];
 
 	for( let letter in DIACRITICS ){
 		let _diacritics = DIACRITICS[letter];
 		for( let n = 0; n < _diacritics.length; n++ ){
 			var code_point = _diacritics.codePointAt(n);
-			char_codes.push( code_point );
+			if( code_point ) char_codes.push( code_point );
 		}
 	}
 
 	//https://stackoverflow.com/questions/40431572/is-there-a-simple-way-to-group-js-array-values-by-range
 	char_codes.sort((a, b) => a - b);
+	var accumulator: number[][] = [];
     var result = char_codes.reduce(function (accumulator, currentValue, index, source) {
 
 		if( !index ){
@@ -171,11 +172,14 @@ function toCodePoints(tolerance=8){
 
 		}else{
 
-			accumulator.push( [accumulator.pop()[0],currentValue]);
+			let range = accumulator.pop();
+			if( range ){
+				accumulator.push( [range[0],currentValue]);
+			}
 		}
 
         return accumulator;
-    }, []);
+    }, accumulator);
 
 	console.log(`char_codes (${result.length})`,result);
 }
@@ -231,7 +235,7 @@ export function generateDiacritics():TDiacraticList{
  * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/
  *
  */
-var diacritics:TDiacraticList = null
+var diacritics:null|TDiacraticList = null
 export function diacriticRegexPoints(regex:string):string{
 
 	if( diacritics === null ){

@@ -23,6 +23,7 @@ import { diacriticRegexPoints, asciifold } from './diacritics.ts';
 type TField = {
 	field: string,
 	weight?: number,
+	direction?: string,
 }
 
 type TOptions = {
@@ -39,8 +40,8 @@ type TOptions = {
 
 type TToken = {
 	string:string,
-	regex:RegExp,
-	field:string
+	regex:RegExp|null,
+	field:string|null,
 }
 
 type TWeights = {[key:string]:number}
@@ -84,8 +85,8 @@ export default class Sifter{
 	tokenize(query:string, respect_word_boundaries?:boolean, weights?:TWeights ):TToken[] {
 		if (!query || !query.length) return [];
 
-		const tokens = [];
-		const words = query.split(/\s+/);
+		const tokens:TToken[]	= [];
+		const words				= query.split(/\s+/);
 		var field_regex;
 
 		if( weights ){
@@ -94,8 +95,8 @@ export default class Sifter{
 
 		words.forEach((word:string) => {
 			let field_match;
-			let field	= null;
-			let regex	= null;
+			let field:null|string	= null;
+			let regex:null|string	= null;
 
 			// look for "field:query" tokens
 			if( field_regex && (field_match = word.match(field_regex)) ){
@@ -108,13 +109,12 @@ export default class Sifter{
 				if( this.settings.diacritics ){
 					regex = diacriticRegexPoints(regex);
 				}
-				if( respect_word_boundaries ) regex = "\\b"+regex
-				regex = new RegExp(regex, 'i');
+				if( respect_word_boundaries ) regex = "\\b"+regex;
 			}
 
 			tokens.push({
 				string : word,
-				regex  : regex,
+				regex  : regex ? new RegExp(regex,'i') : null,
 				field  : field,
 			});
 		});
