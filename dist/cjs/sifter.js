@@ -20,14 +20,13 @@ var diacritics = require('./diacritics.js');
  * @author Brian Reavis <brian@thirdroute.com>
  */
 class Sifter {
+  // []|{};
+
   /**
    * Textually searches arrays and hashes of objects
    * by property (or multiple properties). Designed
    * specifically for autocomplete.
    *
-   * @constructor
-   * @param {array|object} items
-   * @param {object} items
    */
   constructor(items, settings) {
     this.items = void 0;
@@ -71,12 +70,11 @@ class Sifter {
         }
 
         if (respect_word_boundaries) regex = "\\b" + regex;
-        regex = new RegExp(regex, 'i');
       }
 
       tokens.push({
         string: word,
-        regex: regex,
+        regex: regex ? new RegExp(regex, 'i') : null,
         field: field
       });
     });
@@ -199,19 +197,16 @@ class Sifter {
   }
 
   _getSortFunction(search) {
-    var i, n, sort_fld, sort_flds_count, multiplier, implicit_score;
+    var i, n, implicit_score;
     const self = this,
           options = search.options,
-          sort = !search.query && options.sort_empty || options.sort,
+          sort = !search.query && options.sort_empty ? options.sort_empty : options.sort,
           sort_flds = [],
           multipliers = [];
     /**
      * Fetches the specified sort field value
      * from a search result item.
      *
-     * @param  {string} name
-     * @param  {object} result
-     * @return {string}
      */
 
     const get_field = function get_field(name, result) {
@@ -260,13 +255,13 @@ class Sifter {
     } // build function
 
 
-    sort_flds_count = sort_flds.length;
+    const sort_flds_count = sort_flds.length;
 
     if (!sort_flds_count) {
       return null;
     } else if (sort_flds_count === 1) {
-      sort_fld = sort_flds[0].field;
-      multiplier = multipliers[0];
+      const sort_fld = sort_flds[0].field;
+      const multiplier = multipliers[0];
       return function (a, b) {
         return multiplier * utils.cmp(get_field(sort_fld, a), get_field(sort_fld, b));
       };
@@ -299,20 +294,19 @@ class Sifter {
 
     if (options.fields) {
       utils.propToArray(options, 'fields');
+      const fields = [];
+      options.fields.forEach(field => {
+        if (typeof field == 'string') {
+          field = {
+            field: field,
+            weight: 1
+          };
+        }
 
-      if (Array.isArray(options.fields) && typeof options.fields[0] !== 'object') {
-        var fields = [];
-        options.fields.forEach(fld_name => {
-          fields.push({
-            field: fld_name
-          });
-        });
-        options.fields = fields;
-      }
-
-      options.fields.forEach(field_params => {
-        weights[field_params.field] = 'weight' in field_params ? field_params.weight : 1;
+        fields.push(field);
+        weights[field.field] = 'weight' in field ? field.weight : 1;
       });
+      options.fields = fields;
     }
 
     query = diacritics.asciifold(query + '').toLowerCase().trim();
@@ -335,13 +329,12 @@ class Sifter {
     var self = this,
         score,
         search;
-    var fn_sort;
-    var fn_score;
     search = this.prepareSearch(query, options);
     options = search.options;
     query = search.query; // generate result scoring function
 
-    fn_score = options.score || self._getScoreFunction(search); // perform search and sort
+    const fn_score = options.score || self._getScoreFunction(search); // perform search and sort
+
 
     if (query.length) {
       utils.iterate(self.items, (item, id) => {
@@ -363,7 +356,8 @@ class Sifter {
       });
     }
 
-    fn_sort = self._getSortFunction(search);
+    const fn_sort = self._getSortFunction(search);
+
     if (fn_sort) search.items.sort(fn_sort); // apply limits
 
     search.total = search.items.length;

@@ -1,14 +1,14 @@
 /*! sifter.js | https://github.com/orchidjs/sifter.js | Apache License (v2) */
 import { asciifold } from './diacritics.js';
 
-// @ts-ignore
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
+
 /**
  * A property getter resolving dot-notation
  * @param  {Object}  obj     The root object to fetch property on
  * @param  {String}  name    The optionally dotted property name to fetch
  * @return {Object}          The resolved property value
  */
-
 function getAttr(obj, name) {
   if (!obj) return;
   return obj[name];
@@ -22,9 +22,10 @@ function getAttr(obj, name) {
 
 function getAttrNesting(obj, name) {
   if (!obj) return;
-  var names = name.split(".");
+  var part,
+      names = name.split(".");
 
-  while (names.length && (obj = obj[names.shift()]));
+  while ((part = names.shift()) && (obj = obj[part]));
 
   return obj;
 }
@@ -32,8 +33,6 @@ function getAttrNesting(obj, name) {
  * Calculates how close of a match the
  * given value is against a search token.
  *
- * @param {object} token
- * @return {number}
  */
 
 function scoreValue(value, token, weight) {
@@ -70,7 +69,6 @@ function propToArray(obj, key) {
  * });
  * ```
  *
- * @param {array|object} object
  */
 
 function iterate(object, callback) {
