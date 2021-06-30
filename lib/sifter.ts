@@ -23,16 +23,20 @@ import { diacriticRegexPoints, asciifold } from './diacritics.ts';
 type TField = {
 	field: string,
 	weight?: number,
+}
+
+type TSort = {
+	field: string,
 	direction?: string,
 }
 
 type TOptions = {
  	fields: TField[],
- 	sort: any[],
+ 	sort: TSort[],
  	score?: ()=>any,
  	filter?: boolean,
  	limit?: number,
- 	sort_empty?: any,
+ 	sort_empty?: TSort[],
  	nesting?: boolean,
 	respect_word_boundaries?: boolean,
 	conjunction?: string,
@@ -242,9 +246,9 @@ export default class Sifter{
 
 		const self	= this,
 		options		= search.options,
-		sort		= (!search.query && options.sort_empty) || options.sort,
-		sort_flds	= [],
-		multipliers = [];
+		sort		= (!search.query && options.sort_empty) ? options.sort_empty : options.sort,
+		sort_flds:TSort[]		= [],
+		multipliers:number[]	= [];
 
 
 		/**
@@ -341,7 +345,7 @@ export default class Sifter{
 		if( options.fields ){
 			propToArray(options,'fields');
 			if( Array.isArray(options.fields) && typeof options.fields[0] !== 'object' ){
-				var fields = [];
+				const fields:TField[] = [];
 				options.fields.forEach((fld_name) => {
 					fields.push({field:fld_name});
 				});
