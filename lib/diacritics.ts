@@ -190,7 +190,7 @@ function toCodePoints(tolerance=8){
  */
 export function generateDiacritics():TDiacraticList{
 
-	var latin_convert = {
+	var latin_convert:{[key:string]:string} = {
 		'l·': 'l',
 		'ʼn': 'n',
 		'æ': 'ae',
@@ -199,7 +199,7 @@ export function generateDiacritics():TDiacraticList{
 		'dž': 'dz',
 	};
 
-	var diacritics	= {};
+	var diacritics:{[key:string]:string} = {};
 	//var no_latin	= [];
 	code_points.forEach((code_range)=>{
 

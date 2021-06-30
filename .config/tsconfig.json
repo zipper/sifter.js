@@ -7,7 +7,6 @@
 		"target": "esnext",
 		"module": "esnext",
 		"noUnusedLocals": true,
-		"noImplicitAny":false,
 
 		"declaration": true,
 		"declarationDir": "../dist/types",

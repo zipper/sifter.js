@@ -1,6 +1,10 @@
 
-// @ts-ignore
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import { asciifold } from './diacritics.ts';
+
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
+import { TToken } from './sifter.ts';
+
 
 /**
  * A property getter resolving dot-notation
@@ -30,10 +34,8 @@ export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
  * Calculates how close of a match the
  * given value is against a search token.
  *
- * @param {object} token
- * @return {number}
  */
-export function scoreValue(value:string, token, weight:number ) {
+export function scoreValue(value:string, token:TToken, weight:number ):number {
 	var score, pos;
 
 	if (!value) return 0;
@@ -57,7 +59,7 @@ export function escape_regex(str:string):string {
  * Cast object property to an array if it exists and has a value
  *
  */
-export function propToArray(obj, key){
+export function propToArray(obj:{[key:string]:any}, key:string){
 	var value = obj[key];
 	if( value && !Array.isArray(value) ){
 		obj[key] = [value];
@@ -74,9 +76,8 @@ export function propToArray(obj, key){
  * });
  * ```
  *
- * @param {array|object} object
  */
-export function iterate(object, callback) {
+export function iterate(object:[]|{[key:string]:any}, callback:(value:any,key:number|string)=>any) {
 
 	if ( Array.isArray(object)) {
 		object.forEach(callback);
@@ -93,7 +94,7 @@ export function iterate(object, callback) {
 
 
 
-export function cmp(a, b) {
+export function cmp(a:number|string, b:number|string) {
 	if (typeof a === 'number' && typeof b === 'number') {
 		return a > b ? 1 : (a < b ? -1 : 0);
 	}

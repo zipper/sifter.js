@@ -14,15 +14,15 @@
  * @author Brian Reavis <brian@thirdroute.com>
  */
 
-// @ts-ignore
+ // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
-// @ts-ignore
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import { diacriticRegexPoints, asciifold } from './diacritics.ts';
 
 
 type TField = {
 	field: string,
-	weight?: number,
+	weight: number,
 }
 
 type TSort = {
@@ -55,28 +55,35 @@ type TPrepareObj = {
 	query: string,
 	tokens: TToken[],
 	total: number,
-	items: any[],
+	items: TResultItem[],
 	weights: TWeights,
-	getAttrFn: (any,string)=>any,
+	getAttrFn: (data:any,field:string)=>any,
 
 }
+
+type TSettings = {
+	diacritics:boolean
+}
+
+type TResultItem = {
+	score: number,
+	id: number|string,
+}
+
 
 
 export default class Sifter{
 
-	public items: []|{};
-	public settings: {diacritics:boolean};
+	public items; // []|{};
+	public settings: TSettings;
 
 	/**
 	 * Textually searches arrays and hashes of objects
 	 * by property (or multiple properties). Designed
 	 * specifically for autocomplete.
 	 *
-	 * @constructor
-	 * @param {array|object} items
-	 * @param {object} items
 	 */
-	constructor(items, settings) {
+	constructor(items:any, settings:TSettings) {
 		this.items = items;
 		this.settings = settings || {diacritics: true};
 	};
@@ -91,7 +98,7 @@ export default class Sifter{
 
 		const tokens:TToken[]	= [];
 		const words				= query.split(/\s+/);
-		var field_regex;
+		var field_regex:RegExp;
 
 		if( weights ){
 			field_regex = new RegExp( '^('+ Object.keys(weights).map(escape_regex).join('|')+')\:(.*)$');
@@ -135,7 +142,7 @@ export default class Sifter{
 	 *
 	 * @returns {function}
 	 */
-	getScoreFunction(query:string, options ){
+	getScoreFunction(query:string, options:TOptions ){
 		var search = this.prepareSearch(query, options);
 		return this._getScoreFunction(search);
 	}
@@ -170,13 +177,13 @@ export default class Sifter{
 
 
 			if (field_count === 1) {
-				return function(token:TToken, data) {
+				return function(token:TToken, data:{}) {
 					const field = fields[0].field;
 					return scoreValue(getAttrFn(data, field), token, weights[field]);
 				};
 			}
 
-			return function(token:TToken, data) {
+			return function(token:TToken, data:{}) {
 				var sum = 0;
 
 				// is the token specific to a field?
@@ -193,7 +200,7 @@ export default class Sifter{
 
 
 				}else{
-					iterate(weights, (weight, field) => {
+					iterate(weights, (weight:number, field:string) => {
 						sum += scoreValue(getAttrFn(data, field), token, weight);
 					});
 				}
@@ -203,13 +210,13 @@ export default class Sifter{
 		})();
 
 		if (token_count === 1) {
-			return function(data) {
+			return function(data:{}) {
 				return scoreObject(tokens[0], data);
 			};
 		}
 
 		if (search.options.conjunction === 'and') {
-			return function(data) {
+			return function(data:{}) {
 				var i = 0, score, sum = 0;
 				for (; i < token_count; i++) {
 					score = scoreObject(tokens[i], data);
@@ -219,7 +226,7 @@ export default class Sifter{
 				return sum / token_count;
 			};
 		} else {
-			return function(data) {
+			return function(data:{}) {
 				var sum = 0;
 				iterate(tokens,(token:TToken)=>{
 					sum += scoreObject(token, data);
@@ -236,13 +243,13 @@ export default class Sifter{
 	 *
 	 * @return function(a,b)
 	 */
-	getSortFunction(query:string, options) {
+	getSortFunction(query:string, options:TOptions) {
 		var search  = this.prepareSearch(query, options);
 		return this._getSortFunction(search);
 	}
 
 	_getSortFunction(search:TPrepareObj){
-		var i, n, sort_fld, sort_flds_count, multiplier, implicit_score;
+		var i, n, implicit_score;
 
 		const self	= this,
 		options		= search.options,
@@ -255,11 +262,8 @@ export default class Sifter{
 		 * Fetches the specified sort field value
 		 * from a search result item.
 		 *
-		 * @param  {string} name
-		 * @param  {object} result
-		 * @return {string}
 		 */
-		const get_field = function(name, result) {
+		const get_field = function(name:string, result:TResultItem):string|number {
 			if (name === '$score') return result.score;
 			return search.getAttrFn(self.items[result.id], name);
 		};
@@ -300,20 +304,20 @@ export default class Sifter{
 		}
 
 		// build function
-		sort_flds_count = sort_flds.length;
+		const sort_flds_count = sort_flds.length;
 		if (!sort_flds_count) {
 			return null;
 		} else if (sort_flds_count === 1) {
-			sort_fld = sort_flds[0].field;
-			multiplier = multipliers[0];
-			return function(a, b) {
+			const sort_fld = sort_flds[0].field;
+			const multiplier = multipliers[0];
+			return function(a:TResultItem, b:TResultItem) {
 				return multiplier * cmp(
 					get_field(sort_fld, a),
 					get_field(sort_fld, b)
 				);
 			};
 		} else {
-			return function(a, b) {
+			return function(a:TResultItem, b:TResultItem) {
 				var i, result, field;
 				for (i = 0; i < sort_flds_count; i++) {
 					field = sort_flds[i].field;
@@ -334,8 +338,8 @@ export default class Sifter{
 	 * with results.
 	 *
 	 */
-	prepareSearch(query:string, optsUser):TPrepareObj {
-		const weights	= {};
+	prepareSearch(query:string, optsUser:TOptions):TPrepareObj {
+		const weights:TWeights = {};
 		var options		= Object.assign({},optsUser);
 
 		propToArray(options,'sort');
@@ -344,18 +348,15 @@ export default class Sifter{
 		// convert fields to new format
 		if( options.fields ){
 			propToArray(options,'fields');
-			if( Array.isArray(options.fields) && typeof options.fields[0] !== 'object' ){
-				const fields:TField[] = [];
-				options.fields.forEach((fld_name) => {
-					fields.push({field:fld_name});
-				});
-				options.fields = fields;
-			}
-
-
-			options.fields.forEach((field_params)=>{
-				weights[field_params.field] = ('weight' in field_params) ? field_params.weight : 1;
+			const fields:TField[] = [];
+			options.fields.forEach((field:string|TField) => {
+				if( typeof field == 'string' ){
+					field = {field:field,weight:1};
+				}
+				fields.push(field);
+				weights[field.field] = ('weight' in field) ? field.weight : 1;
 			});
+			options.fields = fields;
 		}
 
 		query = asciifold( query + '' ).toLowerCase().trim();
@@ -376,32 +377,30 @@ export default class Sifter{
 	 *
 	 */
 	search(query:string, options:TOptions) : TPrepareObj {
-		var self = this, score, search;
-		var fn_sort;
-		var fn_score;
+		var self = this, score, search:TPrepareObj;
 
 		search  = this.prepareSearch(query, options);
 		options = search.options;
 		query   = search.query;
 
 		// generate result scoring function
-		fn_score = options.score || self._getScoreFunction(search);
+		const fn_score = options.score || self._getScoreFunction(search);
 
 		// perform search and sort
 		if (query.length) {
-			iterate(self.items, (item, id) => {
+			iterate(self.items, (item:TResultItem, id:string|number) => {
 				score = fn_score(item);
 				if (options.filter === false || score > 0) {
 					search.items.push({'score': score, 'id': id});
 				}
 			});
 		} else {
-			iterate(self.items, (item, id) => {
+			iterate(self.items, (item:TResultItem, id:string|number) => {
 				search.items.push({'score': 1, 'id': id});
 			});
 		}
 
-		fn_sort = self._getSortFunction(search);
+		const fn_sort = self._getSortFunction(search);
 		if (fn_sort) search.items.sort(fn_sort);
 
 		// apply limits
