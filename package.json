@@ -17,6 +17,7 @@
   "main": "dist/umd/sifter.js",
   "browser": "dist/umd/sifter.js",
   "module": "dist/esm/sifter.js",
+  "types": "lib/sifter.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/orchidjs/sifter.js.git"
