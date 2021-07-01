@@ -12,7 +12,7 @@ import * as T from './types.ts';
  * @param  {String}  name    The optionally dotted property name to fetch
  * @return {Object}          The resolved property value
  */
-export function getAttr(obj:{[key:string]:any}, name:string ) {
+export const getAttr = (obj:{[key:string]:any}, name:string ) => {
     if (!obj ) return;
     return obj[name];
 };
@@ -23,7 +23,7 @@ export function getAttr(obj:{[key:string]:any}, name:string ) {
  * @param  {String}  name    The optionally dotted property name to fetch
  * @return {Object}          The resolved property value
  */
-export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
+export const getAttrNesting = (obj:{[key:string]:any}, name:string ) => {
     if (!obj ) return;
     var part, names = name.split(".");
 	while( (part = names.shift()) && (obj = obj[part]));
@@ -35,7 +35,7 @@ export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
  * given value is against a search token.
  *
  */
-export function scoreValue(value:string, token:T.Token, weight:number ):number {
+export const scoreValue = (value:string, token:T.Token, weight:number ):number => {
 	var score, pos;
 
 	if (!value) return 0;
@@ -50,7 +50,7 @@ export function scoreValue(value:string, token:T.Token, weight:number ):number {
 	return score * weight;
 };
 
-export function escape_regex(str:string):string {
+export const escape_regex = (str:string):string => {
 	return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
 };
 
@@ -59,7 +59,7 @@ export function escape_regex(str:string):string {
  * Cast object property to an array if it exists and has a value
  *
  */
-export function propToArray(obj:{[key:string]:any}, key:string){
+export const propToArray = (obj:{[key:string]:any}, key:string) => {
 	var value = obj[key];
 	if( value && !Array.isArray(value) ){
 		obj[key] = [value];
@@ -77,7 +77,7 @@ export function propToArray(obj:{[key:string]:any}, key:string){
  * ```
  *
  */
-export function iterate(object:[]|{[key:string]:any}, callback:(value:any,key:number|string)=>any) {
+export const iterate = (object:[]|{[key:string]:any}, callback:(value:any,key:number|string)=>any) => {
 
 	if ( Array.isArray(object)) {
 		object.forEach(callback);
@@ -94,7 +94,7 @@ export function iterate(object:[]|{[key:string]:any}, callback:(value:any,key:nu
 
 
 
-export function cmp(a:number|string, b:number|string) {
+export const cmp = (a:number|string, b:number|string) => {
 	if (typeof a === 'number' && typeof b === 'number') {
 		return a > b ? 1 : (a < b ? -1 : 0);
 	}

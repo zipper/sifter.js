@@ -2,7 +2,7 @@
 type TDiacraticList = {[key:string]:string};
 
 // https://github.com/andrewrk/node-diacritics/blob/master/index.js
-var DIACRITICS:TDiacraticList = {
+export const DIACRITICS:TDiacraticList = {
 	" ":" ",
 	0:"߀",
 	A:"ⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ",
@@ -138,7 +138,7 @@ var code_points = [
  * via https://github.com/krisk/Fuse/issues/133#issuecomment-318692703
  *
  */
-export function asciifold(str:string):string{
+export const asciifold = (str:string):string => {
 	return str.normalize('NFD').replace(/[\u0300-\u036F]/g, '').normalize('NFKD').toLowerCase();
 };
 
@@ -188,7 +188,7 @@ function toCodePoints(tolerance=8){
  * Generate a list of diacritics from the list of code points
  *
  */
-export function generateDiacritics():TDiacraticList{
+export const generateDiacritics = ():TDiacraticList => {
 
 	var latin_convert:{[key:string]:string} = {
 		'l·': 'l',
@@ -236,7 +236,7 @@ export function generateDiacritics():TDiacraticList{
  *
  */
 var diacritics:null|TDiacraticList = null
-export function diacriticRegexPoints(regex:string):string{
+export const diacriticRegexPoints = (regex:string):string => {
 
 	if( diacritics === null ){
 		diacritics = generateDiacritics();
