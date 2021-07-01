@@ -3,7 +3,7 @@
 import { asciifold } from './diacritics.ts';
 
 // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
-import { TToken } from './sifter.ts';
+import * as T from './types.ts';
 
 
 /**
@@ -35,7 +35,7 @@ export function getAttrNesting(obj:{[key:string]:any}, name:string ) {
  * given value is against a search token.
  *
  */
-export function scoreValue(value:string, token:TToken, weight:number ):number {
+export function scoreValue(value:string, token:T.Token, weight:number ):number {
 	var score, pos;
 
 	if (!value) return 0;
