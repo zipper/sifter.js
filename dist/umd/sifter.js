@@ -18,16 +18,16 @@
 	 *
 	 */
 
-	function asciifold(str) {
+	const asciifold = str => {
 	  return str.normalize('NFD').replace(/[\u0300-\u036F]/g, '').normalize('NFKD').toLowerCase();
-	}
+	};
 	/**
 	 * Generate a list of diacritics from the list of code points
 	 *
 	 */
 
 
-	function generateDiacritics() {
+	const generateDiacritics = () => {
 	  var latin_convert = {
 	    'l·': 'l',
 	    'ʼn': 'n',
@@ -63,7 +63,7 @@
 	  }); //console.log('no_latin',JSON.stringify(no_latin));
 
 	  return diacritics;
-	}
+	};
 	/**
 	 * Expand a regular expression pattern to include diacritics
 	 * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/
@@ -71,7 +71,7 @@
 	 */
 
 	var diacritics = null;
-	function diacriticRegexPoints(regex) {
+	const diacriticRegexPoints = regex => {
 	  if (diacritics === null) {
 	    diacritics = generateDiacritics();
 	  }
@@ -83,7 +83,7 @@
 	  }
 
 	  return regex;
-	}
+	};
 	/**
 	 * Expand a regular expression pattern to include diacritics
 	 * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/
@@ -127,10 +127,10 @@
 	 * @param  {String}  name    The optionally dotted property name to fetch
 	 * @return {Object}          The resolved property value
 	 */
-	function getAttr(obj, name) {
+	const getAttr = (obj, name) => {
 	  if (!obj) return;
 	  return obj[name];
-	}
+	};
 	/**
 	 * A property getter resolving dot-notation
 	 * @param  {Object}  obj     The root object to fetch property on
@@ -138,7 +138,7 @@
 	 * @return {Object}          The resolved property value
 	 */
 
-	function getAttrNesting(obj, name) {
+	const getAttrNesting = (obj, name) => {
 	  if (!obj) return;
 	  var part,
 	      names = name.split(".");
@@ -146,14 +146,14 @@
 	  while ((part = names.shift()) && (obj = obj[part]));
 
 	  return obj;
-	}
+	};
 	/**
 	 * Calculates how close of a match the
 	 * given value is against a search token.
 	 *
 	 */
 
-	function scoreValue(value, token, weight) {
+	const scoreValue = (value, token, weight) => {
 	  var score, pos;
 	  if (!value) return 0;
 	  value = value + '';
@@ -162,22 +162,22 @@
 	  score = token.string.length / value.length;
 	  if (pos === 0) score += 0.5;
 	  return score * weight;
-	}
-	function escape_regex(str) {
+	};
+	const escape_regex = str => {
 	  return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
-	}
+	};
 	/**
 	 * Cast object property to an array if it exists and has a value
 	 *
 	 */
 
-	function propToArray(obj, key) {
+	const propToArray = (obj, key) => {
 	  var value = obj[key];
 
 	  if (value && !Array.isArray(value)) {
 	    obj[key] = [value];
 	  }
-	}
+	};
 	/**
 	 * Iterates over arrays and hashes.
 	 *
@@ -189,7 +189,7 @@
 	 *
 	 */
 
-	function iterate(object, callback) {
+	const iterate = (object, callback) => {
 	  if (Array.isArray(object)) {
 	    object.forEach(callback);
 	  } else {
@@ -199,8 +199,8 @@
 	      }
 	    }
 	  }
-	}
-	function cmp(a, b) {
+	};
+	const cmp = (a, b) => {
 	  if (typeof a === 'number' && typeof b === 'number') {
 	    return a > b ? 1 : a < b ? -1 : 0;
 	  }
@@ -210,7 +210,7 @@
 	  if (a > b) return 1;
 	  if (b > a) return -1;
 	  return 0;
-	}
+	};
 
 	/**
 	 * sifter.js
@@ -227,6 +227,7 @@
 	 *
 	 * @author Brian Reavis <brian@thirdroute.com>
 	 */
+
 	class Sifter {
 	  // []|{};
 
@@ -326,9 +327,6 @@
 	     * Calculates the score of an object
 	     * against the search query.
 	     *
-	     * @param {TToken} token
-	     * @param {object} data
-	     * @return {number}
 	     */
 
 

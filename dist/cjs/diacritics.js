@@ -16,16 +16,16 @@ var code_points = [[67, 67], [160, 160], [192, 438], [452, 652], [961, 961], [10
  *
  */
 
-function asciifold(str) {
+const asciifold = str => {
   return str.normalize('NFD').replace(/[\u0300-\u036F]/g, '').normalize('NFKD').toLowerCase();
-}
+};
 /**
  * Generate a list of diacritics from the list of code points
  *
  */
 
 
-function generateDiacritics() {
+const generateDiacritics = () => {
   var latin_convert = {
     'l·': 'l',
     'ʼn': 'n',
@@ -61,7 +61,7 @@ function generateDiacritics() {
   }); //console.log('no_latin',JSON.stringify(no_latin));
 
   return diacritics;
-}
+};
 /**
  * Expand a regular expression pattern to include diacritics
  * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/
@@ -69,7 +69,7 @@ function generateDiacritics() {
  */
 
 var diacritics = null;
-function diacriticRegexPoints(regex) {
+const diacriticRegexPoints = regex => {
   if (diacritics === null) {
     diacritics = generateDiacritics();
   }
@@ -81,7 +81,7 @@ function diacriticRegexPoints(regex) {
   }
 
   return regex;
-}
+};
 /**
  * Expand a regular expression pattern to include diacritics
  * 	eg /a/ becomes /aⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑAⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ/

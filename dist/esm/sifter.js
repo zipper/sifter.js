@@ -17,6 +17,7 @@ import { diacriticRegexPoints, asciifold } from './diacritics.js';
  *
  * @author Brian Reavis <brian@thirdroute.com>
  */
+
 class Sifter {
   // []|{};
 
@@ -116,9 +117,6 @@ class Sifter {
      * Calculates the score of an object
      * against the search query.
      *
-     * @param {TToken} token
-     * @param {object} data
-     * @return {number}
      */
 
 
