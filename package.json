@@ -17,7 +17,7 @@
   "main": "dist/umd/sifter.js",
   "browser": "dist/umd/sifter.js",
   "module": "dist/esm/sifter.js",
-  "types": "lib/sifter.ts",
+  "types": "dist/types/sifter.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/orchidjs/sifter.js.git"
@@ -28,6 +28,7 @@
     "pretest": "npm run build",
     "benchmark": "node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js",
+	"build:types": "tsc -p .config --emitDeclarationOnly",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {

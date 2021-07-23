@@ -96,6 +96,13 @@ if ! cp -r build/* dist; then
 fi
 
 
+# make sure types are up-to-date
+if ! npm run build:types; then
+	echo 'types not generated'
+	exit
+fi
+
+
 # prompt before finalizing
 if ! ask "Version $VERSION is ready for release. Are you sure?"; then
 	echo 'release aborted'

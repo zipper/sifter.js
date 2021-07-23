@@ -10,7 +10,7 @@
 
 		"declaration": true,
 		"declarationDir": "../dist/types",
-
+		"isolatedModules": true,
 		"moduleResolution": "node"
 	},
 }
