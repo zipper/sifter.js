@@ -74,7 +74,7 @@ export default class Sifter{
 
 			tokens.push({
 				string : word,
-				regex  : regex ? new RegExp(regex,'i') : null,
+				regex  : regex ? new RegExp(regex,'iu') : null,
 				field  : field,
 			});
 		});
