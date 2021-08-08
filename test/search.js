@@ -303,5 +303,19 @@ describe('#search()', function() {
 		assert.equal(result.items[0].id,0);
 	});
 
+	it('should match one item', function() {
+
+		var data = [
+			{fieldx: 'ffal'},
+			{fieldx: 'ffla'}
+		];
+		var sifter = new Sifter(data);
+
+		var result = sifter.search('ffl', {
+			fields: ['fieldx']
+		});
+
+		assert.equal(result.items.length,1);
+	});
 
 });

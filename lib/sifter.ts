@@ -17,7 +17,7 @@
  // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
 // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
-import { diacriticRegexPoints, asciifold } from './diacritics.ts';
+import { diacriticRegexPoints } from './diacritics.ts';
 // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import * as T from 'types.ts';
 
@@ -305,11 +305,10 @@ export default class Sifter{
 			options.fields = fields;
 		}
 
-		query = asciifold( query + '' ).toLowerCase().trim();
 
 		return {
 			options		: options,
-			query		: query,
+			query		: query.toLowerCase().trim(),
 			tokens		: this.tokenize(query, options.respect_word_boundaries, weights),
 			total		: 0,
 			items		: [],
