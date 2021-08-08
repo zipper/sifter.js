@@ -44,16 +44,16 @@ describe('diacritics', () => {
 				}
 								
 				tokens = sifter.tokenize(composed);
-				assert.equal(tokens[0].regex.test(composed), true);
+				assert.equal(tokens[0].regex.test(composed), true, 'composed should match composed for ' + composed + ' regex: '+tokens[0].regex);
 				
 				tokens = sifter.tokenize(decomposed);
-				assert.equal(tokens[0].regex.test(decomposed), true);
+				assert.equal(tokens[0].regex.test(decomposed), true, 'decomposed should match composed for ' + decomposed + ' and ' + composed + ' regex: '+tokens[0].regex);
 				
 				tokens = sifter.tokenize(composed);
-				assert.equal(tokens[0].regex.test(decomposed), true);
+				assert.equal(tokens[0].regex.test(decomposed), true, 'composed should match decomposed for ' + composed + ' and ' + decomposed + ' regex: '+tokens[0].regex);
 
 				tokens = sifter.tokenize(decomposed);
-				assert.equal(tokens[0].regex.test(composed), true);
+				assert.equal(tokens[0].regex.test(composed), true, 'decomposed should match composed for ' + decomposed + ' and ' + composed + ' regex: '+tokens[0].regex);
 					
 			};
 		});

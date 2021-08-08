@@ -258,7 +258,7 @@ export const generateDiacritics = ():TDiacraticList => {
 			}
 
 			if( !(latin in diacritics) ){
-				diacritics[latin] = [latin,latin.toUpperCase()];
+				diacritics[latin] = [latin];
 			}
 			diacritics[latin].push(diacritic);
 		}
