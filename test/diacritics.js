@@ -44,7 +44,7 @@ describe('diacritics', () => {
 				}
 								
 				tokens = sifter.tokenize(composed);
-				assert.equal(tokens[0].regex.test(composed), false, 'composed should match composed for ' + composed + ' regex: '+tokens[0].regex);
+				assert.equal(tokens[0].regex.test(composed), true, 'composed should match composed for ' + composed + ' regex: '+tokens[0].regex);
 				
 				tokens = sifter.tokenize(decomposed);
 				assert.equal(tokens[0].regex.test(decomposed), true, 'decomposed should match composed for ' + decomposed + ' and ' + composed + ' regex: '+tokens[0].regex);
