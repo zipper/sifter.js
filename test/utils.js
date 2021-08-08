@@ -8,7 +8,7 @@ describe('#prepareSearch()', function() {
 		var from	= 'aḀḁĂăÂâǍǎȺⱥȦȧẠạÄäÀàÁáĀāÃãÅåąĄÃąĄ';
 		var to		= 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-		assert.equal( utils.cmp(from,to), true);
+		assert.strictEqual( utils.cmp(from,to), 0 );
 	});
 
 	it('getAttr should return void when invalid object passed', function() {
