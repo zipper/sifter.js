@@ -28,7 +28,7 @@
     "pretest": "npm run build",
     "benchmark": "node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js",
-	"build:types": "tsc -p .config --emitDeclarationOnly",
+    "build:types": "tsc -p .config --emitDeclarationOnly",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
