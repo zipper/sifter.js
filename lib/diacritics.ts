@@ -209,9 +209,9 @@ function toCodePoints(tolerance=8){
  *	ex ['ab','a'] => (?:ab|a)
  *
  */
-export const arrayToPattern = (chars:string[]):string =>{
+export const arrayToPattern = (chars:string[],glue:string='|'):string =>{
 	if( chars.length > 1 ){
-		return '(?:'+chars.join('|')+')';
+		return '(?:'+chars.join(glue)+')';
 	}
 	return chars[0];
 };
@@ -289,7 +289,7 @@ export const generateDiacritics = ():TDiacraticList => {
 				return l;
 			});
 			
-			return arrayToPattern(sub_pat);
+			return arrayToPattern(sub_pat,'');
 		});
 		
 		diacritic_patterns[latin] = arrayToPattern(pattern);		
