@@ -75,7 +75,7 @@ class Sifter {
 
       tokens.push({
         string: word,
-        regex: regex ? new RegExp(regex, 'i') : null,
+        regex: regex ? new RegExp(regex, 'iu') : null,
         field: field
       });
     });
@@ -307,10 +307,9 @@ class Sifter {
       options.fields = fields;
     }
 
-    query = diacritics.asciifold(query + '').toLowerCase().trim();
     return {
       options: options,
-      query: query,
+      query: query.toLowerCase().trim(),
       tokens: this.tokenize(query, options.respect_word_boundaries, weights),
       total: 0,
       items: [],

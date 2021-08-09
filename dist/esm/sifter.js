@@ -1,6 +1,6 @@
 /*! sifter.js | https://github.com/orchidjs/sifter.js | Apache License (v2) */
 import { escape_regex, iterate, cmp, propToArray, getAttrNesting, getAttr, scoreValue } from './utils.js';
-import { diacriticRegexPoints, asciifold } from './diacritics.js';
+import { diacriticRegexPoints } from './diacritics.js';
 
 /**
  * sifter.js
@@ -73,7 +73,7 @@ class Sifter {
 
       tokens.push({
         string: word,
-        regex: regex ? new RegExp(regex, 'i') : null,
+        regex: regex ? new RegExp(regex, 'iu') : null,
         field: field
       });
     });
@@ -305,10 +305,9 @@ class Sifter {
       options.fields = fields;
     }
 
-    query = asciifold(query + '').toLowerCase().trim();
     return {
       options: options,
-      query: query,
+      query: query.toLowerCase().trim(),
       tokens: this.tokenize(query, options.respect_word_boundaries, weights),
       total: 0,
       items: [],
