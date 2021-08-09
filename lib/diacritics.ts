@@ -6,9 +6,9 @@ type TDiacraticList = {[key:string]:string};
 var latin_pat:RegExp;
 const accent_pat = '[\u0300-\u036F\u{b7}\u{2be}]'; // \u{2bc}
 const accent_reg = new RegExp(accent_pat,'g');
-var diacritic_patterns:null|TDiacraticList = null;
+var diacritic_patterns:TDiacraticList;
 
-const latin_convert = {
+const latin_convert:TDiacraticList = {
 	'æ': 'ae',
 	'ⱥ': 'a',
 	'ø': 'o',
@@ -305,7 +305,7 @@ export const generateDiacritics = ():TDiacraticList => {
  */
 export const diacriticRegexPoints = (regex:string):string => {
 
-	if( diacritic_patterns === null ){
+	if( diacritic_patterns === undefined ){
 		diacritic_patterns = generateDiacritics();
 	}
 	
