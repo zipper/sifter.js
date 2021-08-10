@@ -45,8 +45,13 @@ const scoreValue = (value, token, weight) => {
   if (pos === 0) score += 0.5;
   return score * weight;
 };
+/**
+ *
+ * https://stackoverflow.com/questions/63006601/why-does-u-throw-an-invalid-escape-error
+ */
+
 const escape_regex = str => {
-  return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+  return (str + '').replace(/([\$\(-\+\.\?\[-\^\{-\}])/g, '\\$1');
 };
 /**
  * Cast object property to an array if it exists and has a value

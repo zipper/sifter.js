@@ -24,6 +24,10 @@ export declare const getAttrNesting: (obj: {
  *
  */
 export declare const scoreValue: (value: string, token: any, weight: number) => number;
+/**
+ *
+ * https://stackoverflow.com/questions/63006601/why-does-u-throw-an-invalid-escape-error
+ */
 export declare const escape_regex: (str: string) => string;
 /**
  * Cast object property to an array if it exists and has a value
