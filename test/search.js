@@ -318,4 +318,18 @@ describe('#search()', function() {
 		assert.equal(result.items.length,1);
 	});
 
+	it('should escape regex characters', function() {
+
+		var data = [
+			{fieldx: '$()*+.?[]^{|}\\'}
+		];
+		var sifter = new Sifter(data);
+
+		var result = sifter.search('$()*+.?[]^{|}\\', {
+			fields: ['fieldx']
+		});
+
+		assert.equal(result.items.length,1);
+	});
+
 });

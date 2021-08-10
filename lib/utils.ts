@@ -50,8 +50,12 @@ export const scoreValue = (value:string, token:T.Token, weight:number ):number =
 	return score * weight;
 };
 
-export const escape_regex = (str:string):string => {
-	return (str + '').replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+/**
+ *
+ * https://stackoverflow.com/questions/63006601/why-does-u-throw-an-invalid-escape-error
+ */
+export const escape_regex = (str:string):string => {	
+	return (str + '').replace(/([\$\(\)\*\+\.\?\[\]\^\{\|\}\\])/gu, '\\$1');
 };
 
 
