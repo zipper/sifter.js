@@ -260,9 +260,9 @@ export const generateDiacritics = ():TDiacraticList => {
 
 		for(let i = code_range[0]; i <= code_range[1]; i++){
 			
-			let diacritic	= String.fromCharCode(i);			
-			let	latin		= asciifold(diacritic);			
-				
+			let diacritic	= String.fromCharCode(i);
+			let	latin		= asciifold(diacritic);
+
 			if( latin == diacritic.toLowerCase() ){
 				continue;
 			}
@@ -270,6 +270,12 @@ export const generateDiacritics = ():TDiacraticList => {
 			if( !(latin in diacritics) ){
 				diacritics[latin] = [latin];
 			}
+			
+			var patt = new RegExp( arrayToPattern(diacritics[latin]),'iu');
+			if( diacritic.match(patt) ){
+				continue;
+			}
+			
 			diacritics[latin].push(diacritic);
 		}
 	});
