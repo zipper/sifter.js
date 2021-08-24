@@ -31,16 +31,26 @@ const asciifold = str => {
 /**
  * Convert array of strings to a regular expression
  *	ex ['ab','a'] => (?:ab|a)
+ * 	ex ['a','b'] => [ab]
  *
  */
 
 
 const arrayToPattern = (chars, glue = '|') => {
-  if (chars.length > 1) {
-    return '(?:' + chars.join(glue) + ')';
+  if (chars.length == 1) {
+    return chars[0];
   }
 
-  return chars[0];
+  var longest = 1;
+  chars.forEach(a => {
+    longest = Math.max(longest, a.length);
+  });
+
+  if (longest == 1) {
+    return '[' + chars.join('') + ']';
+  }
+
+  return '(?:' + chars.join(glue) + ')';
 };
 /**
  * Get all possible combinations of substrings that add up to the given string
@@ -79,6 +89,12 @@ const generateDiacritics = () => {
 
       if (!(latin in diacritics)) {
         diacritics[latin] = [latin];
+      }
+
+      var patt = new RegExp(arrayToPattern(diacritics[latin]), 'iu');
+
+      if (diacritic.match(patt)) {
+        continue;
       }
 
       diacritics[latin].push(diacritic);

@@ -16,6 +16,7 @@ export declare const asciifold: (str: string) => string;
 /**
  * Convert array of strings to a regular expression
  *	ex ['ab','a'] => (?:ab|a)
+ * 	ex ['a','b'] => [ab]
  *
  */
 export declare const arrayToPattern: (chars: string[], glue?: string) => string;
