@@ -207,13 +207,23 @@ function toCodePoints(tolerance=8){
 /**
  * Convert array of strings to a regular expression
  *	ex ['ab','a'] => (?:ab|a)
+ * 	ex ['a','b'] => [ab]
  *
  */
 export const arrayToPattern = (chars:string[],glue:string='|'):string =>{
-	if( chars.length > 1 ){
-		return '(?:'+chars.join(glue)+')';
+	
+	if( chars.length == 1 ){
+		return chars[0];
 	}
-	return chars[0];
+	
+	var longest = 1;
+	chars.forEach((a)=>{longest = Math.max(longest,a.length)});
+
+	if( longest == 1 ){
+		return '['+chars.join('')+']';
+	}
+
+	return '(?:'+chars.join(glue)+')';	
 };
 
 /**
