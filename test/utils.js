@@ -1,5 +1,5 @@
 var assert = require('assert');
-var utils = require('../build/cjs/utils.js');
+var utils = require('../dist/cjs/utils.js');
 
 describe('#prepareSearch()', function() {
 

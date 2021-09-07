@@ -82,19 +82,6 @@ if ! npm run build; then
 	exit
 fi
 
-# remove contents of dist folder
-if ! rm -r dist/*; then
-	echo '/dist not emptied... cannot create release'
-	exit
-fi
-
-
-# copy /build to /dist
-if ! cp -r build/* dist; then
-	echo '/build not copied to /dist... cannot create release'
-	exit
-fi
-
 
 # make sure types are up-to-date
 if ! npm run build:types; then

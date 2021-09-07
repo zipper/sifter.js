@@ -1,5 +1,5 @@
 var assert = require('assert');
-var Sifter = require('../build/cjs/sifter.js');
+var Sifter = require('../dist/cjs/sifter.js');
 
 describe('#getScoreFunction()', function() {
 

@@ -1,7 +1,7 @@
 var assert = require('assert');
-var diacritics = require('../build/cjs/diacritics.js');
-var utils = require('../build/cjs/utils.js');
-var Sifter = require('../build/cjs/sifter.js');
+var diacritics = require('../dist/cjs/diacritics.js');
+var utils = require('../dist/cjs/utils.js');
+var Sifter = require('../dist/cjs/sifter.js');
 
 describe('diacritics', () => {
 

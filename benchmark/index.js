@@ -18,7 +18,7 @@ process.chdir(__dirname);
 
 var fs        = require('fs');
 var humanize  = require('humanize');
-var Sifter    = require('../build/umd/sifter.js');
+var Sifter    = require('../dist/umd/sifter.js');
 var microtime;
 
 try {

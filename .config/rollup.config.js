@@ -37,7 +37,7 @@ var terser_config = terser({
 configs.push({
 	input: path.resolve(__dirname,'../lib/sifter.ts'),
 	output:{
-		dir: path.resolve(__dirname,'../build/esm'),
+		dir: path.resolve(__dirname,'../dist/esm'),
 		format: 'esm',
 		preserveModules: true,
 		sourcemap: true,
@@ -50,7 +50,7 @@ configs.push({
 configs.push({
 	input: path.resolve(__dirname,'../lib/sifter.ts'),
 	output:{
-		dir: path.resolve(__dirname,'../build/cjs'),
+		dir: path.resolve(__dirname,'../dist/cjs'),
 		format: 'cjs',
 		preserveModules: true,
 		sourcemap: true,
@@ -65,7 +65,7 @@ configs.push({
 		input: path.resolve(__dirname,'../lib/sifter.ts'),
 		output: {
 			name: 'sifter',
-			file: `build/umd/sifter.js`,
+			file: `dist/umd/sifter.js`,
 			format: 'umd',
 			sourcemap: true,
 			banner: banner
@@ -80,7 +80,7 @@ configs.push({
 		input: path.resolve(__dirname,'../lib/sifter.ts'),
 		output: {
 			name: 'sifter',
-			file: `build/umd/sifter.min.js`,
+			file: `dist/umd/sifter.min.js`,
 			format: 'umd',
 			sourcemap: true,
 			banner: banner
