@@ -88,6 +88,7 @@ Performs a search for `query` with the provided `options`.
 		<td valign="top"><code>fields</code></td>
 		<td valign="top">array</td>
 		<td valign="top">An array of property names and optional weights to be searched.
+		
 ```js
 fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent",weight:0.5}],
 ```
@@ -100,8 +101,24 @@ fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent
 	</tr>
 	<tr>
 		<td valign="top"><code>sort</code></td>
-		<td valign="top">array</td>
-		<td valign="top">An array of fields to sort by. Each item should be an object containing at least a <code>"field"</code> property. Optionally, <code>direction</code> can be set to <code>"asc"</code> or <code>"desc"</code>. The order of the array defines the sort precedence.<br><br>Unless present, a special <code>"$score"</code> property will be automatically added to the beginning of the sort list. This will make results sorted primarily by match quality (descending).</td>
+		<td valign="top">array|function</td>
+		<td valign="top">
+		An array of fields to sort by. 
+		Each item should be an object containing at least a <code>"field"</code> property. Optionally, <code>direction</code> can be set to <code>"asc"</code> or <code>"desc"</code>. 
+		The order of the array defines the sort precedence.
+		<br/><br/>		
+		Unless present, a special <code>"$score"</code> property will be automatically added to the beginning of the sort list. 
+		This will make results sorted primarily by match quality (descending).
+		<br/><br/>
+		Alternatively, you can define a callback function to handle sorting. For example:
+```js
+sort: function(a,b){
+	var item_a = this.items[a.id];
+	var item_b = this.items[b.id];
+	return item_a.fielda.localeCompare(item_b.fielda);
+},
+```
+</td>
 	</tr>
 	<tr>
 		<td valign="top"><code>sort_empty</code></td>
