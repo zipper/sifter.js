@@ -65,6 +65,9 @@ export const escape_regex = (str:string):string => {
  */
 export const propToArray = (obj:{[key:string]:any}, key:string) => {
 	var value = obj[key];
+	
+	if( typeof value == 'function' ) return value;
+	
 	if( value && !Array.isArray(value) ){
 		obj[key] = [value];
 	}

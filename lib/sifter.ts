@@ -204,6 +204,10 @@ export default class Sifter{
 		multipliers:number[]	= [];
 
 
+		if( typeof sort == 'function' ){
+			return sort.bind(this);
+		}			
+
 		/**
 		 * Fetches the specified sort field value
 		 * from a search result item.

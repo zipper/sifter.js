@@ -164,7 +164,7 @@ describe('sorting', function() {
 		assert.equal(result.items[2].id, 1);
 	});
 
-	it('should not order results by $score', function() {
+	it('should not order results by $score (use original order)', function() {
 
 		var data = [
 			{fielda:'aaab',$order:1},
@@ -188,6 +188,35 @@ describe('sorting', function() {
 		assert.equal(search.items[3].id,3);
 		assert.equal(search.items[4].id,4);
 		assert.equal(search.items[5].id,5);
+	});
+
+	it('user defined sort function', function() {
+
+		var data = [
+			{fielda:'af'},
+			{fielda:'ad'},
+			{fielda:'aa'},
+			{fielda:'ac'},
+			{fielda:'ae'},
+			{fielda:'ab'},
+		];
+
+		var sifter = new Sifter(data);
+		var search = sifter.search('a', {
+			fields: [{field: 'fielda'}],
+			sort: function(a,b){
+				var item_a = this.items[a.id];
+				var item_b = this.items[b.id];
+				return item_a.fielda.localeCompare(item_b.fielda);
+			},
+		});
+
+		assert.equal(search.items[0].id,2); // aa
+		assert.equal(search.items[1].id,5); // ab
+		assert.equal(search.items[2].id,3); // ac
+		assert.equal(search.items[3].id,1); // ad
+		assert.equal(search.items[4].id,4); // ae
+		assert.equal(search.items[5].id,0); // af
 	});
 
 });

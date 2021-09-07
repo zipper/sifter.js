@@ -1,3 +1,5 @@
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
+import Sifter from 'sifter.ts';
 
 export type Field = {
 	field: string,
@@ -9,13 +11,15 @@ export type Sort = {
 	direction?: string,
 }
 
+export type SortFn = (this:Sifter, a:ResultItem, b:ResultItem)=>number;	
+
 export type Options = {
  	fields: Field[],
  	score: ()=>any,
  	filter: boolean,
  	limit: number,
-	sort: Sort[],
- 	sort_empty: Sort[],
+	sort: SortFn|Sort[],
+ 	sort_empty: SortFn|Sort[],
  	nesting: boolean,
 	respect_word_boundaries: boolean,
 	conjunction: string,
