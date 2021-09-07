@@ -11,14 +11,14 @@ export type Sort = {
 
 export type Options = {
  	fields: Field[],
- 	sort: Sort[],
- 	score?: ()=>any,
- 	filter?: boolean,
- 	limit?: number,
- 	sort_empty?: Sort[],
- 	nesting?: boolean,
-	respect_word_boundaries?: boolean,
-	conjunction?: string,
+ 	score: ()=>any,
+ 	filter: boolean,
+ 	limit: number,
+	sort: Sort[],
+ 	sort_empty: Sort[],
+ 	nesting: boolean,
+	respect_word_boundaries: boolean,
+	conjunction: string,
 }
 
 export type Token = {

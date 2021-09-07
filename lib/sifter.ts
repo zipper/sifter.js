@@ -284,7 +284,7 @@ export default class Sifter{
 	 * with results.
 	 *
 	 */
-	prepareSearch(query:string, optsUser:T.Options):T.PrepareObj {
+	prepareSearch(query:string, optsUser:Partial<T.Options>):T.PrepareObj {
 		const weights:T.Weights = {};
 		var options		= Object.assign({},optsUser);
 
