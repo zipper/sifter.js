@@ -59,5 +59,10 @@
     "testMatch": [
       "**/test/**/*.js"
     ]
-  }
+  },
+  "files": [
+    "/dist",
+    "/lib"
+  ],
+
 }
