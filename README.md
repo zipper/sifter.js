@@ -90,7 +90,11 @@ Performs a search for `query` with the provided `options`.
 		<td valign="top">An array of property names and optional weights to be searched.
 		
 ```js
-fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent",weight:0.5}],
+fields: [
+	{field:"title",weight:2},
+	{field:"location",weight:1},
+	{field:"continent",weight:0.5}
+],
 ```
 </td>
 	</tr>
@@ -111,6 +115,7 @@ fields: [{field:"title",weight:2},{field:"location",weight:1}, {field:"continent
 		This will make results sorted primarily by match quality (descending).
 		<br/><br/>
 		Alternatively, you can define a callback function to handle sorting. For example:
+
 ```js
 sort: function(a,b){
 	var item_a = this.items[a.id];
