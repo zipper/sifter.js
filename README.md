@@ -1,7 +1,7 @@
 # sifter.js
 [![Build Status](https://travis-ci.org/orchidjs/sifter.js.svg)](https://travis-ci.org/orchidjs/sifter.js)
 [![Coverage Status](http://img.shields.io/coveralls/orchidjs/sifter.js/master.svg?style=flat)](https://coveralls.io/r/orchidjs/sifter.js)
-
+<a href="https://www.npmjs.com/package/@orchidjs/sifter" class="m-1 d-inline-block"><img alt="npm (scoped)" src="https://img.shields.io/npm/v/@orchidjs/sifter?color=007ec6"></a>
 
 Sifter is a fast and small (<6kb) client and server-side library (coded in TypeScript and available in [CJS, UMD, and ESM](https://irian.to/blogs/what-are-cjs-amd-umd-and-esm-in-javascript/)) for textually searching arrays and hashes of objects by property – or multiple properties. It's designed specifically for autocomplete. The process is three-step: *score*, *filter*, *sort*.
 
