@@ -344,7 +344,7 @@ export default class Sifter{
 				}
 			});
 		} else {
-			iterate(self.items, (item:T.ResultItem, id:string|number) => {
+			iterate(self.items, (_:T.ResultItem, id:string|number) => {
 				search.items.push({'score': 1, 'id': id});
 			});
 		}
