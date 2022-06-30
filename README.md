@@ -1,5 +1,5 @@
 # sifter.js
-[![Build Status](https://travis-ci.org/orchidjs/sifter.js.svg)](https://travis-ci.org/orchidjs/sifter.js)
+[![Build Status](https://img.shields.io/travis/com/orchidjs/sifter.js)](https://travis-ci.com/github/orchidjs/sifter.js)
 [![Coverage Status](http://img.shields.io/coveralls/orchidjs/sifter.js/master.svg?style=flat)](https://coveralls.io/r/orchidjs/sifter.js)
 <a href="https://www.npmjs.com/package/@orchidjs/sifter" class="m-1 d-inline-block"><img alt="npm (scoped)" src="https://img.shields.io/npm/v/@orchidjs/sifter?color=007ec6"></a>
 
@@ -88,7 +88,7 @@ Performs a search for `query` with the provided `options`.
 		<td valign="top"><code>fields</code></td>
 		<td valign="top">array</td>
 		<td valign="top">An array of property names and optional weights to be searched.
-		
+
 ```js
 fields: [
 	{field:"title",weight:2},
@@ -107,11 +107,11 @@ fields: [
 		<td valign="top"><code>sort</code></td>
 		<td valign="top">array|function</td>
 		<td valign="top">
-		An array of fields to sort by. 
-		Each item should be an object containing at least a <code>"field"</code> property. Optionally, <code>direction</code> can be set to <code>"asc"</code> or <code>"desc"</code>. 
+		An array of fields to sort by.
+		Each item should be an object containing at least a <code>"field"</code> property. Optionally, <code>direction</code> can be set to <code>"asc"</code> or <code>"desc"</code>.
 		The order of the array defines the sort precedence.
 		<br/><br/>		
-		Unless present, a special <code>"$score"</code> property will be automatically added to the beginning of the sort list. 
+		Unless present, a special <code>"$score"</code> property will be automatically added to the beginning of the sort list.
 		This will make results sorted primarily by match quality (descending).
 		<br/><br/>
 		Alternatively, you can define a callback function to handle sorting. For example:
