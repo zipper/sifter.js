@@ -25,11 +25,11 @@
   "scripts": {
     "test": "jest --coverage",
     "test:typescript": "tsc -p .config --noemit",
+    "test:coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
     "pretest": "npm run build",
     "benchmark": "node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js",
     "build:types": "tsc -p .config --emitDeclarationOnly",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
