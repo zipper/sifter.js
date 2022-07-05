@@ -27,7 +27,7 @@
     "test:typescript": "tsc -p .config --noemit",
     "test:coveralls": "npm run build && jest --coverage && cat ./coverage/lcov.info | coveralls",
     "pretest": "npm run build",
-    "benchmark": "node --expose-gc benchmark/index.js",
+    "benchmark": "npm run build && node --expose-gc benchmark/index.js",
     "build": "npx rollup -c .config/rollup.config.js",
     "build:types": "tsc -p .config --emitDeclarationOnly"
   },
@@ -63,5 +63,6 @@
   "files": [
     "/dist",
     "/lib"
-  ]
+  ],
+  "dependencies": {}
 }
