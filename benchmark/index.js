@@ -21,22 +21,15 @@ var humanize  = require('humanize');
 var Sifter    = require('../dist/umd/sifter.js');
 var microtime;
 
-try {
-	microtime = require('microtime');
-} catch(error) {
-	microtime = {
-		now: function now() {
-			return +new Date();
-		}
-	};
-}
+const now = () => Date.now();
+
 
 var measure_time = function(fn) {
 	var start, end;
 	global.gc();
-	start = microtime.now();
+	start = now();
 	fn();
-	end = microtime.now();
+	end = now();
 	global.gc();
 	return end - start;
 };
