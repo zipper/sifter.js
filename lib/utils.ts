@@ -54,7 +54,7 @@ export const scoreValue = (value:string, token:T.Token, weight:number ):number =
  *
  * https://stackoverflow.com/questions/63006601/why-does-u-throw-an-invalid-escape-error
  */
-export const escape_regex = (str:string):string => {	
+export const escape_regex = (str:string):string => {
 	return (str + '').replace(/([\$\(\)\*\+\.\?\[\]\^\{\|\}\\])/gu, '\\$1');
 };
 
@@ -65,9 +65,9 @@ export const escape_regex = (str:string):string => {
  */
 export const propToArray = (obj:{[key:string]:any}, key:string) => {
 	var value = obj[key];
-	
+
 	if( typeof value == 'function' ) return value;
-	
+
 	if( value && !Array.isArray(value) ){
 		obj[key] = [value];
 	}
