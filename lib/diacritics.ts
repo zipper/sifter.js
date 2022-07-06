@@ -1,11 +1,13 @@
 
+import { escape_regex } from './utils.ts';
+
 type TDiacraticList = {[key:string]:string};
 
 // https://github.com/andrewrk/node-diacritics/blob/master/index.js
 
 var latin_pat:RegExp;
 const accent_pat = '[\u0300-\u036F\u{b7}\u{2be}]'; // \u{2bc}
-const accent_reg = new RegExp(accent_pat,'g');
+const accent_reg = new RegExp(accent_pat,'gu');
 var diacritic_patterns:TDiacraticList;
 
 const latin_convert:TDiacraticList = {
@@ -14,139 +16,9 @@ const latin_convert:TDiacraticList = {
 	'ø': 'o',
 };
 
-const convert_pat = new RegExp(Object.keys(latin_convert).join('|'),'g');
+const convert_pat = new RegExp(Object.keys(latin_convert).join('|'),'gu');
 
-
-export const DIACRITICS:TDiacraticList = {
-	" ":" ",
-	0:"߀",
-	A:"ⒶＡÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄȺⱯ",
-	AA:"Ꜳ",
-	AE:"ÆǼǢ",
-	AO:"Ꜵ",
-	AU:"Ꜷ",
-	AV:"ꜸꜺ",
-	AY:"Ꜽ",
-	B:"ⒷＢḂḄḆɃƁ",
-	C:"ⒸＣꜾḈĆCĈĊČÇƇȻ",
-	D:"ⒹＤḊĎḌḐḒḎĐƊƉᴅꝹ",
-	Dh:"Ð",
-	DZ:"ǱǄ",
-	Dz:"ǲǅ",
-	E:"ɛⒺＥÈÉÊỀẾỄỂẼĒḔḖĔĖËẺĚȄȆẸỆȨḜĘḘḚƐƎᴇ",
-	F:"ꝼⒻＦḞƑꝻ",
-	G:"ⒼＧǴĜḠĞĠǦĢǤƓꞠꝽꝾɢ",
-	H:"ⒽＨĤḢḦȞḤḨḪĦⱧⱵꞍ",
-	I:"ⒾＩÌÍÎĨĪĬİÏḮỈǏȈȊỊĮḬƗ",
-	J:"ⒿＪĴɈȷ",
-	K:"ⓀＫḰǨḲĶḴƘⱩꝀꝂꝄꞢ",
-	L:"ⓁＬĿĹĽḶḸĻḼḺŁȽⱢⱠꝈꝆꞀ",
-	LJ:"Ǉ",
-	Lj:"ǈ",
-	M:"ⓂＭḾṀṂⱮƜϻ",
-	N:"ꞤȠⓃＮǸŃÑṄŇṆŅṊṈƝꞐᴎ",
-	NJ:"Ǌ",
-	Nj:"ǋ",
-	O:"ⓄＯÒÓÔỒỐỖỔÕṌȬṎŌṐṒŎȮȰÖȪỎŐǑȌȎƠỜỚỠỞỢỌỘǪǬØǾƆƟꝊꝌ",
-	OE:"Œ",
-	OI:"Ƣ",
-	OO:"Ꝏ",
-	OU:"Ȣ",
-	P:"ⓅＰṔṖƤⱣꝐꝒꝔ",
-	Q:"ⓆＱꝖꝘɊ",
-	R:"ⓇＲŔṘŘȐȒṚṜŖṞɌⱤꝚꞦꞂ",
-	S:"ⓈＳẞŚṤŜṠŠṦṢṨȘŞⱾꞨꞄ",
-	T:"ⓉＴṪŤṬȚŢṰṮŦƬƮȾꞆ",
-	Th:"Þ",
-	TZ:"Ꜩ",
-	U:"ⓊＵÙÚÛŨṸŪṺŬÜǛǗǕǙỦŮŰǓȔȖƯỪỨỮỬỰỤṲŲṶṴɄ",
-	V:"ⓋＶṼṾƲꝞɅ",
-	VY:"Ꝡ",
-	W:"ⓌＷẀẂŴẆẄẈⱲ",
-	X:"ⓍＸẊẌ",
-	Y:"ⓎＹỲÝŶỸȲẎŸỶỴƳɎỾ",
-	Z:"ⓏＺŹẐŻŽẒẔƵȤⱿⱫꝢ",
-	a:"ⓐａẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁąⱥɐɑ",
-	aa:"ꜳ",
-	ae:"æǽǣ",
-	ao:"ꜵ",
-	au:"ꜷ",
-	av:"ꜹꜻ",
-	ay:"ꜽ",
-	b:"ⓑｂḃḅḇƀƃɓƂ",
-	c:"ｃⓒćĉċčçḉƈȼꜿↄ",
-	d:"ⓓｄḋďḍḑḓḏđƌɖɗƋᏧԁꞪ",
-	dh:"ð",
-	dz:"ǳǆ",
-	e:"ⓔｅèéêềếễểẽēḕḗĕėëẻěȅȇẹệȩḝęḙḛɇǝ",
-	f:"ⓕｆḟƒ",
-	ff:"ﬀ",
-	fi:"ﬁ",
-	fl:"ﬂ",
-	ffi:"ﬃ",
-	ffl:"ﬄ",
-	g:"ⓖｇǵĝḡğġǧģǥɠꞡꝿᵹ",
-	h:"ⓗｈĥḣḧȟḥḩḫẖħⱨⱶɥ",
-	hv:"ƕ",
-	i:"ⓘｉìíîĩīĭïḯỉǐȉȋịįḭɨı",
-	j:"ⓙｊĵǰɉ",
-	k:"ⓚｋḱǩḳķḵƙⱪꝁꝃꝅꞣ",
-	l:"ⓛｌŀĺľḷḹļḽḻſłƚɫⱡꝉꞁꝇɭ",
-	lj:"ǉ",
-	m:"ⓜｍḿṁṃɱɯ",
-	n:"ⓝｎǹńñṅňṇņṋṉƞɲŉꞑꞥлԉ",
-	nj:"ǌ",
-	o:"ⓞｏòóôồốỗổõṍȭṏōṑṓŏȯȱöȫỏőǒȍȏơờớỡởợọộǫǭøǿꝋꝍɵɔᴑ",
-	oe:"œ",
-	oi:"ƣ",
-	oo:"ꝏ",
-	ou:"ȣ",
-	p:"ⓟｐṕṗƥᵽꝑꝓꝕρ",
-	q:"ⓠｑɋꝗꝙ",
-	r:"ⓡｒŕṙřȑȓṛṝŗṟɍɽꝛꞧꞃ",
-	s:"ⓢｓśṥŝṡšṧṣṩșşȿꞩꞅẛʂ",
-	ss:"ß",
-	t:"ⓣｔṫẗťṭțţṱṯŧƭʈⱦꞇ",
-	th:"þ",
-	tz:"ꜩ",
-	u:"ⓤｕùúûũṹūṻŭüǜǘǖǚủůűǔȕȗưừứữửựụṳųṷṵʉ",
-	v:"ⓥｖṽṿʋꝟʌ",
-	vy:"ꝡ",
-	w:"ⓦｗẁẃŵẇẅẘẉⱳ",
-	x:"ⓧｘẋẍ",
-	y:"ⓨｙỳýŷỹȳẏÿỷẙỵƴɏỿ",
-	z:"ⓩｚźẑżžẓẕƶȥɀⱬꝣ"
-}
-
-/**
- * code points generated from toCodePoints();
- * removed 65339 to 65345
- */
-export const code_points = [
-	[ 67, 67 ],
-	[ 160, 160 ],
-	[ 192, 438 ],
-	[ 452, 652 ],
-	[ 961, 961 ],
-	[ 1019, 1019 ],
-	[ 1083, 1083 ],
-	[ 1281, 1289 ],
-	[ 1984, 1984 ],
-	[ 5095, 5095 ],
-	[ 7429, 7441 ],
-	[ 7545, 7549 ],
-	[ 7680, 7935 ],
-	[ 8580, 8580 ],
-	[ 9398, 9449 ],
-	[ 11360, 11391 ],
-	[ 42792, 42793 ],
-	[ 42802, 42851 ],
-	[ 42873, 42897 ],
-	[ 42912, 42922 ],
-	[ 64256, 64260 ],
-	[ 65313, 65338 ],
-	[ 65345, 65370 ]
-];
+const code_points = [[ 0, 65535 ]];
 
 /**
  * Remove accents
@@ -163,47 +35,6 @@ export const asciifold = (str:string):string => {
 		});
 };
 
-
-/**
- * Convert list of diacritics to array of code points
- *
- */
-// @ts-ignore
-function toCodePoints(tolerance=8){
-	var char_codes:number[] = [];
-
-	for( let letter in DIACRITICS ){
-		let _diacritics = DIACRITICS[letter];
-		for( let n = 0; n < _diacritics.length; n++ ){
-			var code_point = _diacritics.codePointAt(n);
-			if( code_point ) char_codes.push( code_point );
-		}
-	}
-
-	//https://stackoverflow.com/questions/40431572/is-there-a-simple-way-to-group-js-array-values-by-range
-	char_codes.sort((a, b) => a - b);
-	var accumulator: number[][] = [];
-	char_codes.reduce(function (accumulator, currentValue, index, source) {
-
-		if( !index ){
-			accumulator.push( [currentValue,currentValue] );
-
-		}else if( currentValue - source[index - 1] > tolerance ){
-			accumulator.push( [currentValue,currentValue] );
-
-		}else{
-
-			let range = accumulator.pop();
-			if( range ){
-				accumulator.push( [range[0],currentValue]);
-			}
-		}
-
-		return accumulator;
-	}, accumulator);
-
-}
-
 /**
  * Convert array of strings to a regular expression
  *	ex ['ab','a'] => (?:ab|a)
@@ -211,11 +42,11 @@ function toCodePoints(tolerance=8){
  *
  */
 export const arrayToPattern = (chars:string[],glue:string='|'):string =>{
-	
+
 	if( chars.length == 1 ){
 		return chars[0];
 	}
-	
+
 	var longest = 1;
 	chars.forEach((a)=>{longest = Math.max(longest,a.length)});
 
@@ -223,7 +54,12 @@ export const arrayToPattern = (chars:string[],glue:string='|'):string =>{
 		return '['+chars.join('')+']';
 	}
 
-	return '(?:'+chars.join(glue)+')';	
+	return '(?:'+chars.join(glue)+')';
+};
+
+export const escapeToPattern = (chars:string[]):string =>{
+	const escaped = chars.map((diacritic) => escape_regex(diacritic));
+	return arrayToPattern(escaped);
 };
 
 /**
@@ -245,7 +81,7 @@ export const allSubstrings = (input:string):string[][] => {
         tmp.unshift(input.charAt(0));
         result.push(tmp);
     });
-    
+
     return result;
 }
 
@@ -253,13 +89,13 @@ export const allSubstrings = (input:string):string[][] => {
  * Generate a list of diacritics from the list of code points
  *
  */
-export const generateDiacritics = ():TDiacraticList => {	
+export const generateDiacritics = (code_points):TDiacraticList => {
 
 	var diacritics:{[key:string]:string[]} = {};
 	code_points.forEach((code_range)=>{
 
 		for(let i = code_range[0]; i <= code_range[1]; i++){
-			
+
 			let diacritic	= String.fromCharCode(i);
 			let	latin		= asciifold(diacritic);
 
@@ -267,50 +103,67 @@ export const generateDiacritics = ():TDiacraticList => {
 				continue;
 			}
 
+			// skip when latin is a string longer than 3 characters long
+			// bc the resulting regex patterns will be long
+			// eg:
+			// latin صلى الله عليه وسلم length 18 code point 65018
+			// latin جل جلاله length 8 code point 65019
+			if( latin.length > 3 ){
+				continue;
+			}
+
 			if( !(latin in diacritics) ){
 				diacritics[latin] = [latin];
 			}
-			
-			var patt = new RegExp( arrayToPattern(diacritics[latin]),'iu');
+
+			var patt = new RegExp( escapeToPattern(diacritics[latin]),'iu');
 			if( diacritic.match(patt) ){
 				continue;
 			}
-			
+
 			diacritics[latin].push(diacritic);
 		}
 	});
-		
-	var latin_chars = Object.keys(diacritics);
-	
-	
+
+	// filter out if there's only one character in the list
+	let latin_chars = Object.keys(diacritics);
+	for( let i = 0; i < latin_chars.length; i++){
+		const latin = latin_chars[i];
+		if( diacritics[latin].length < 2 ){
+			delete diacritics[latin];
+		}
+	}
+
+
 	// latin character pattern
 	// match longer substrings first
-	latin_chars		= latin_chars.sort((a, b) => b.length - a.length );
-	latin_pat		= new RegExp('('+ arrayToPattern(latin_chars) + accent_pat + '*)','g');
-	
-	
+	latin_chars		= Object.keys(diacritics).sort((a, b) => b.length - a.length );
+	latin_pat		= new RegExp('('+ escapeToPattern(latin_chars) + accent_pat + '*)','gu');
+
+
 	// build diacritic patterns
-	// ae needs: 
+	// ae needs:
 	//	(?:(?:ae|Æ|Ǽ|Ǣ)|(?:A|Ⓐ|Ａ...)(?:E|ɛ|Ⓔ...))
 	var diacritic_patterns:TDiacraticList = {};
 	latin_chars.sort((a,b) => a.length -b.length).forEach((latin)=>{
-		
+
 		var substrings	= allSubstrings(latin);
 		var pattern = substrings.map((sub_pat)=>{
-			
+
 			sub_pat = sub_pat.map((l)=>{
 				if( diacritics.hasOwnProperty(l) ){
-					return arrayToPattern(diacritics[l]);
+					return escapeToPattern(diacritics[l]);
 				}
 				return l;
 			});
-			
+
 			return arrayToPattern(sub_pat,'');
 		});
-		
-		diacritic_patterns[latin] = arrayToPattern(pattern);		
+
+		diacritic_patterns[latin] = arrayToPattern(pattern);
 	});
-			
+
+
 	return diacritic_patterns;
 }
 
@@ -322,30 +175,30 @@ export const generateDiacritics = ():TDiacraticList => {
 export const diacriticRegexPoints = (regex:string):string => {
 
 	if( diacritic_patterns === undefined ){
-		diacritic_patterns = generateDiacritics();
+		diacritic_patterns = generateDiacritics(code_points);
 	}
-	
+
 	const decomposed		= regex.normalize('NFKD').toLowerCase();
-	
+
 	return decomposed.split(latin_pat).map((part:string)=>{
-		
-		if( part == '' ){
+
+		// "ﬄ" or "ffl"
+		const no_accent = asciifold(part);
+		if( no_accent == '' ){
 			return '';
 		}
-		
-		// "ﬄ" or "ffl"
-		const no_accent = asciifold(part);				
+
 		if( diacritic_patterns.hasOwnProperty(no_accent) ){
 			return diacritic_patterns[no_accent];
 		}
-		
+
 		// 'أهلا' (\u{623}\u{647}\u{644}\u{627}) or 'أهلا' (\u{627}\u{654}\u{647}\u{644}\u{627})
 		const composed_part = part.normalize('NFC');
 		if( composed_part != part ){
 			return arrayToPattern([part,composed_part]);
 		}
-				
+
 		return part;
 	}).join('');
-	
+
 }
