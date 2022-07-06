@@ -1,4 +1,5 @@
 
+// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import { escape_regex } from './utils.ts';
 
 type TDiacraticList = {[key:string]:string};
@@ -18,7 +19,7 @@ const latin_convert:TDiacraticList = {
 
 const convert_pat = new RegExp(Object.keys(latin_convert).join('|'),'gu');
 
-const code_points = [[ 0, 65535 ]];
+const code_points:[[number,number]] = [[ 0, 65535 ]];
 
 /**
  * Remove accents
@@ -89,7 +90,7 @@ export const allSubstrings = (input:string):string[][] => {
  * Generate a list of diacritics from the list of code points
  *
  */
-export const generateDiacritics = (code_points):TDiacraticList => {
+export const generateDiacritics = (code_points:[[number,number]]):TDiacraticList => {
 
 	var diacritics:{[key:string]:string[]} = {};
 	code_points.forEach((code_range)=>{
