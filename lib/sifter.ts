@@ -65,9 +65,10 @@ export default class Sifter{
 			}
 
 			if( word.length > 0 ){
-				regex = escape_regex(word);
 				if( this.settings.diacritics ){
-					regex = diacriticRegexPoints(regex);
+					regex = diacriticRegexPoints(word);
+				}else{
+					regex = escape_regex(word);
 				}
 				if( respect_word_boundaries ) regex = "\\b"+regex;
 			}
@@ -206,7 +207,7 @@ export default class Sifter{
 
 		if( typeof sort == 'function' ){
 			return sort.bind(this);
-		}			
+		}
 
 		/**
 		 * Fetches the specified sort field value
