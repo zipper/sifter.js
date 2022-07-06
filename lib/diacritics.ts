@@ -193,12 +193,6 @@ export const diacriticRegexPoints = (regex:string):string => {
 			return diacritic_patterns[no_accent];
 		}
 
-		// 'أهلا' (\u{623}\u{647}\u{644}\u{627}) or 'أهلا' (\u{627}\u{654}\u{647}\u{644}\u{627})
-		const composed_part = part.normalize('NFC');
-		if( composed_part != part ){
-			return arrayToPattern([part,composed_part]);
-		}
-
 		return part;
 	}).join('');
 
