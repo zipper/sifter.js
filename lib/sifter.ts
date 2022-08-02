@@ -60,8 +60,8 @@ export default class Sifter{
 
 			// look for "field:query" tokens
 			if( field_regex && (field_match = word.match(field_regex)) ){
-				field	= field_match[1];
-				word	= field_match[2];
+				field	= field_match[1]!;
+				word	= field_match[2]!;
 			}
 
 			if( word.length > 0 ){
@@ -250,37 +250,32 @@ export default class Sifter{
 			}
 		}
 
-		for (i = 0, n = sort_flds.length; i < n; i++) {
-			multipliers.push(sort_flds[i].direction === 'desc' ? -1 : 1);
-		}
 
 		// build function
 		const sort_flds_count = sort_flds.length;
 		if (!sort_flds_count) {
 			return null;
-		} else if (sort_flds_count === 1) {
-			const sort_fld = sort_flds[0].field;
-			const multiplier = multipliers[0];
-			return function(a:T.ResultItem, b:T.ResultItem) {
-				return multiplier * cmp(
-					get_field(sort_fld, a),
-					get_field(sort_fld, b)
-				);
-			};
-		} else {
-			return function(a:T.ResultItem, b:T.ResultItem) {
-				var i, result, field;
-				for (i = 0; i < sort_flds_count; i++) {
-					field = sort_flds[i].field;
-					result = multipliers[i] * cmp(
-						get_field(field, a),
-						get_field(field, b)
-					);
-					if (result) return result;
-				}
-				return 0;
-			};
 		}
+
+		return function(a:T.ResultItem, b:T.ResultItem) {
+			var i, result, field;
+			for (i = 0; i < sort_flds_count; i++) {
+				field = sort_flds[i].field;
+
+				let multiplier = multipliers[i];
+				if( multiplier == undefined ){
+					multiplier = sort_flds[i].direction === 'desc' ? -1 : 1;
+				}
+
+				result = multiplier * cmp(
+					get_field(field, a),
+					get_field(field, b)
+				);
+				if (result) return result;
+			}
+			return 0;
+		};
+		
 	};
 
 	/**
