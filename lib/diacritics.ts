@@ -32,7 +32,7 @@ export const asciifold = (str:string):string => {
 		.replace(accent_reg, '')
 		.toLowerCase()
 		.replace(convert_pat,function(foreignletter) {
-			return latin_convert[foreignletter];
+			return latin_convert[foreignletter] || foreignletter;
 		});
 };
 
@@ -44,7 +44,7 @@ export const asciifold = (str:string):string => {
  */
 export const arrayToPattern = (chars:string[],glue:string='|'):string =>{
 
-	if( chars.length == 1 ){
+	if( chars.length === 1 && chars[0] != undefined ){
 		return chars[0];
 	}
 
@@ -113,32 +113,29 @@ export const generateDiacritics = (code_points:[[number,number]]):TDiacraticList
 				continue;
 			}
 
-			if( !(latin in diacritics) ){
-				diacritics[latin] = [latin];
-			}
-
-			var patt = new RegExp( escapeToPattern(diacritics[latin]),'iu');
+			const latin_diacritics:string[] = diacritics[latin] || [latin];
+			const patt = new RegExp( escapeToPattern(latin_diacritics),'iu');
 			if( diacritic.match(patt) ){
 				continue;
 			}
-
-			diacritics[latin].push(diacritic);
+			latin_diacritics.push(diacritic);
+			diacritics[latin] = latin_diacritics;
 		}
 	});
 
 	// filter out if there's only one character in the list
-	let latin_chars = Object.keys(diacritics);
-	for( let i = 0; i < latin_chars.length; i++){
-		const latin = latin_chars[i];
-		if( diacritics[latin].length < 2 ){
+	// todo: this may not be needed
+	Object.keys(diacritics).forEach(latin => {
+		const latin_diacritics = diacritics[latin] || [];
+		if( latin_diacritics.length < 2 ){
 			delete diacritics[latin];
 		}
-	}
+	});
 
 
 	// latin character pattern
 	// match longer substrings first
-	latin_chars		= Object.keys(diacritics).sort((a, b) => b.length - a.length );
+	let latin_chars	= Object.keys(diacritics).sort((a, b) => b.length - a.length );
 	latin_pat		= new RegExp('('+ escapeToPattern(latin_chars) + accent_pat + '*)','gu');
 
 
@@ -153,7 +150,7 @@ export const generateDiacritics = (code_points:[[number,number]]):TDiacraticList
 
 			sub_pat = sub_pat.map((l)=>{
 				if( diacritics.hasOwnProperty(l) ){
-					return escapeToPattern(diacritics[l]);
+					return escapeToPattern(diacritics[l]!);
 				}
 				return l;
 			});
