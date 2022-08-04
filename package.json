@@ -64,5 +64,7 @@
     "/dist",
     "/lib"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "@orchidjs/diacritics": "^1.0.0"
+  }
 }

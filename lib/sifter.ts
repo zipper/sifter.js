@@ -15,9 +15,9 @@
  */
 
  // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
-import { scoreValue, getAttr, getAttrNesting, escape_regex, propToArray, iterate, cmp } from './utils.ts';
-// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
-import { diacriticRegexPoints } from './diacritics.ts';
+import { scoreValue, getAttr, getAttrNesting, propToArray, iterate, cmp } from './utils.ts';
+import { diacriticRegexPoints,escape_regex } from '@orchidjs/diacritics';
+
 // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import * as T from 'types.ts';
 
@@ -275,7 +275,7 @@ export default class Sifter{
 			}
 			return 0;
 		};
-		
+
 	};
 
 	/**

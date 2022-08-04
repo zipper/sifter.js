@@ -1,6 +1,6 @@
 
-// @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
-import { asciifold } from './diacritics.ts';
+import { asciifold } from '@orchidjs/diacritics';
+
 
 // @ts-ignore TS2691 "An import path cannot end with a '.ts' extension"
 import * as T from './types.ts';
@@ -48,14 +48,6 @@ export const scoreValue = (value:string, token:T.Token, weight:number ):number =
 	if (pos === 0) score += 0.5;
 
 	return score * weight;
-};
-
-/**
- *
- * https://stackoverflow.com/questions/63006601/why-does-u-throw-an-invalid-escape-error
- */
-export const escape_regex = (str:string):string => {
-	return (str + '').replace(/([\$\(\)\*\+\.\?\[\]\^\{\|\}\\])/gu, '\\$1');
 };
 
 
